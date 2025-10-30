@@ -1,0 +1,11 @@
+# File konfigurasi sensitif
+config.php
+database.php
+.env
+
+# Folder upload pengguna
+/uploads/
+/assets/images/users/
+
+# File log
+*.log

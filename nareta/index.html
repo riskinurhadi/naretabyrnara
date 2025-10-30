@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat dengan Nareta - rnara.id</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* CSS khusus untuk nareta.html agar chatbot di tengah */
+        body {
+            background-color: #f4f4f4; /* Warna latar belakang halaman */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Agar chatbot di tengah vertikal */
+            margin: 0;
+            padding: 20px; /* Padding agar tidak terlalu mepet ke tepi */
+            box-sizing: border-box; /* Pastikan padding tidak membuat overflow */
+        }
+
+        /* Override styling chatbot agar tidak fixed dan bisa di tengah */
+        .chat-container {
+            position: relative; /* Ubah dari fixed menjadi relative/static */
+            bottom: auto;
+            right: auto;
+            width: 380px; /* Lebar chatbot bisa sedikit lebih besar */
+            max-width: 90%; /* Responsif untuk layar kecil */
+            max-height: 90vh; /* Sesuaikan tinggi maksimal */
+            margin: auto; /* Agar di tengah secara horizontal jika position:relative */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sedikit bayangan lebih tebal */
+        }
+
+        /* Sembunyikan tombol toggle di halaman khusus ini jika tidak diinginkan */
+        .chat-toggle-button {
+            display: none;
+        }
+
+        /* Pastikan chat-body tetap bisa di-scroll */
+        .chat-body {
+            max-height: 60vh; /* Sesuaikan tinggi agar tetap nyaman */
+            padding-bottom: 0; /* Hindari padding ganda */
+        }
+
+        /* Sesuaikan tinggi input agar tidak terlalu kecil */
+        .chat-footer input {
+            padding: 12px;
+        }
+        .chat-footer button {
+            padding: 12px 20px; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container" id="chat-box">
+        <div class="chat-header">
+            <h3>Chat dengan Nareta rnara.id</h3>
+            <button class="close-chat-button" id="close-chat">X</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="message bot-message">Halo! Saya Nareta 🌟, Asisten Virtual rnara.id. Ada yang bisa saya bantu?</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="user-input" placeholder="Ketik pertanyaan Anda...">
+            <button id="send-button">Kirim</button>
+        </div>
+    </div>
+
+    <script src="/js/chat.js"></script>
+    <script>
+        // JavaScript khusus untuk halaman nareta.html
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatBox = document.getElementById('chat-box');
+            const closeChatButton = document.getElementById('close-chat');
+            const userInput = document.getElementById('user-input'); // Ambil lagi untuk fokus
+
+            // Hapus kelas 'hidden' agar chatbot langsung terlihat
+            chatBox.classList.remove('hidden');
+
+            // Tambahkan event listener untuk tombol tutup (jika ada)
+            if (closeChatButton) {
+                closeChatButton.addEventListener('click', () => {
+                    // Di halaman khusus, tombol 'X' bisa mengarahkan user keluar
+                    // Atau hanya memberikan pesan bahwa chatbot ini adalah halaman penuh
+                    // Contoh: Mengarahkan ke homepage rnara.id
+                    window.location.href = 'http://rnara.kemusukkidul.com/'; // Ganti dengan URL homepage Anda
+                    // Atau jika tidak ingin mengarahkan, cukup tampilkan alert:
+                    // alert('Nareta adalah halaman khusus chat. Jika ingin keluar, tutup tab ini.');
+                });
+            }
+
+            // Fokuskan input saat halaman dimuat
+            if (userInput) {
+                userInput.focus();
+            }
+
+            // Fungsi sendMessage, appendMessage, scrollToBottom sudah ada di chat.js
+            // Tidak perlu didefinisikan ulang di sini
+        });
+    </script>
+</body>
+</html>

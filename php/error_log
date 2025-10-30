@@ -1,0 +1,10 @@
+[18-Jun-2025 17:32:43 Asia/Jakarta] PHP Parse error:  syntax error, unexpected 'yang' (T_STRING), expecting ']' in /home/keme7623/public_html/rnara.kemusukkidul.com/php/chatbot.php on line 13
+[18-Jun-2025 17:32:56 Asia/Jakarta] PHP Parse error:  syntax error, unexpected 'yang' (T_STRING), expecting ']' in /home/keme7623/public_html/rnara.kemusukkidul.com/php/chatbot.php on line 13
+[18-Jun-2025 17:33:05 Asia/Jakarta] PHP Parse error:  syntax error, unexpected 'yang' (T_STRING), expecting ']' in /home/keme7623/public_html/rnara.kemusukkidul.com/php/chatbot.php on line 13
+[20-Jun-2025 14:40:03 Asia/Jakarta] PHP Parse error:  syntax error, unexpected '}', expecting end of file in /home/keme7623/public_html/rnara.kemusukkidul.com/php/chatbot.php on line 201
+[20-Jun-2025 14:40:29 Asia/Jakarta] PHP Parse error:  syntax error, unexpected '}', expecting end of file in /home/keme7623/public_html/rnara.kemusukkidul.com/php/chatbot.php on line 200
+[20-Jun-2025 15:23:01 Asia/Jakarta] PHP Parse error:  syntax error, unexpected '}', expecting end of file in /home/keme7623/public_html/rnara.kemusukkidul.com/php/chatbot.php on line 337
+[04-Aug-2025 00:11:57 Asia/Jakarta] Gemini API Error: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits.
+[04-Aug-2025 00:20:33 Asia/Jakarta] Gemini API Error: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits.
+[04-Aug-2025 00:20:42 Asia/Jakarta] Gemini API Error: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits.
+[04-Aug-2025 00:20:59 Asia/Jakarta] Gemini API Error: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits.

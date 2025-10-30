@@ -1,0 +1,467 @@
+<!-- Coded with coffee and passion by Riski Nurhadi. -->
+<!-- For inquiries, drop a line to rizkibinmangtrisno@gmail.com -->
+<!-- Visit my Portofolio on:  riskinurhadi.my.id -->
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat dengan Nareta - rnara.id</title>
+    
+    <!-- Link Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* === Reset & Pengaturan Dasar === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* --- Latar Belakang Gradien Tema Terang --- */
+            background: linear-gradient(135deg, #f0f4f7 0%, #e6e9f0 100%);
+            color: #1a202c; /* Teks gelap */
+        }
+
+        /* === Kontainer Utama === */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 80px 20px 20px 20px;
+        }
+
+        /* === Header Halaman (Fixed & Glassmorphism) === */
+        .page-header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            z-index: 100;
+            /* --- Efek Kaca untuk Header --- */
+            /*background: rgba(255, 255, 255, 0.5); */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            /*border-bottom: 1px solid rgba(0, 0, 0, 0.1);*/
+            color: #1a202c;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .logo-area img {
+            width: 32px;
+            height: 32px;
+        }
+        .time-area {
+            font-size: 0.9rem;
+            color: #6a748c;
+        }
+
+        /* === Area Sambutan di Tengah === */
+        .welcome-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 100px;
+            transition: opacity 0.5s ease;
+        }
+
+        .welcome-area h1 {
+            font-size: 2.5rem;
+            font-weight: 500;
+            /* --- Gradien Warna Cerah untuk Judul --- */
+            background: linear-gradient(45deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        .welcome-area p {
+            font-size: 1.1rem;
+            color: #4a5568;
+            max-width: 400px;
+        }
+        .welcome-area.hidden {
+            display: none;
+        }
+
+        /* === Wrapper untuk Chat History & Input === */
+        .chat-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: flex-end;
+            min-height: 0;
+        }
+
+        /* === Badan Chat (History Percakapan) === */
+        .chat-body {
+            overflow-y: auto;
+            padding: 0 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* --- Bubble Chat dengan Efek Glassmorphism --- */
+        .message {
+            padding: 12px 18px;
+            border-radius: 20px;
+            max-width: 80%;
+            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.5); /* Latar belakang putih semi-transparan */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+            color: #1a202c;
+        }
+        .user-message {
+            background: rgba(137, 180, 250, 0.2); /* Warna biru muda semi-transparan */
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+        .bot-message {
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+        .bot-message.typing {
+            background: transparent;
+            backdrop-filter: none;
+            border: none;
+            box-shadow: none;
+            font-style: italic;
+            color: #6a748c;
+        }
+
+        /* Custom Scrollbar */
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-body::-webkit-scrollbar-thumb {
+            background-color: #a0aec0;
+            border-radius: 10px;
+        }
+
+        /* === Footer Chat (Input & Tombol) === */
+        .chat-footer {
+            display: flex;
+            gap: 10px;
+            padding-top: 20px;
+            flex-shrink: 0;
+        }
+        .chat-footer input {
+            flex-grow: 1;
+            padding: 15px 20px;
+            border: 1px solid #cbd5e0;
+            border-radius: 28px;
+            background-color: #ffffff; /* Latar belakang input putih solid */
+            color: #1a202c;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .chat-footer input:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+        }
+        .chat-footer button {
+            padding: 0 20px;
+            border: 1px solid #cbd5e0;
+            border-radius: 28px;
+            background-color: #ffffff;
+            color: #a855f7; /* Warna ungu cerah */
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 0.2s;
+        }
+        .chat-footer button:hover {
+            background-color: #f7fafc;
+        }
+        
+        
+        /* --- Style untuk Blok Kode --- */
+.code-block {
+    position: relative;
+    background-color: #f6f8fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+    overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    color: #24292e;
+}
+.code-block code {
+    white-space: pre-wrap; /* Memastikan teks tidak meluber keluar dari box */
+}
+.copy-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #e1e4e8;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.8em;
+    color: #586069;
+}
+.copy-button:hover {
+    background-color: #d1d5da;
+}
+/* Style untuk Markdown List */
+.message ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 5px;
+}
+.message li {
+    margin-bottom: 5px;
+}
+
+
+
+        /* === Tampilan Mobile Responsif === */
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 70px 15px 15px 15px;
+            }
+            .page-header {
+                padding: 12px 15px;
+            }
+            .welcome-area {
+                margin-top: 50px;
+            }
+            .welcome-area h1 {
+                font-size: 2rem;
+            }
+            .welcome-area p {
+                font-size: 1rem;
+            }
+            .chat-footer input {
+                padding: 12px 18px;
+                font-size: 0.95rem;
+            }
+            .logo-area span {
+                display: none;
+            }
+            .chat-footer button {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <header class="page-header">
+            <div class="logo-area">
+                <img src="img/logo rnara.png" alt="Logo rnara.id"> 
+                <span>Nareta</span>
+            </div>
+            <div class="time-area" id="current-time"></div>
+        </header>
+
+        <main class="welcome-area" id="welcome-area">
+            <h1>Halo Aku Nareta</h1>
+            <p>Asisten dari rnara.id yang siap bantu jawab semua pertanyaan yang ada di benakmu</p>
+        </main>
+
+        <div class="chat-wrapper" id="chat-wrapper" style="display: none;">
+            <div class="chat-body" id="chat-body">
+                <!-- Pesan pembuka bot akan ditambahkan di sini oleh JavaScript -->
+            </div>
+        </div>
+        
+        <footer class="chat-footer">
+            <input type="text" id="user-input" placeholder="Tulis pesan untuk Nareta...">
+            <button id="send-button"><i class="fas fa-paper-plane"></i></button>
+        </footer>
+    </div>
+
+    <!-- Script JavaScript -->
+    <script src="js/chat.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    const timeDisplay = document.getElementById('current-time');
+    const welcomeArea = document.getElementById('welcome-area');
+    const chatWrapper = document.getElementById('chat-wrapper');
+    const chatBody = document.getElementById('chat-body');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+
+    // === Fungsi Bawaan untuk Chat ===
+    function appendMessage(text, className) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', className);
+
+        if (className === 'bot-message') {
+            // Proses teks untuk format Markdown (daftar, tebal, miring) dan blok kode
+            messageDiv.innerHTML = processMarkdown(text);
+        } else {
+            messageDiv.textContent = text;
+        }
+
+        chatBody.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    function scrollToBottom() {
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // === Fungsi untuk mengupdate jam dan tanggal ===
+    function updateTime() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const dateString = now.toLocaleDateString('id-ID', options);
+        const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        timeDisplay.textContent = `${dateString} - ${timeString}`;
+    }
+
+    // === Fungsi untuk memulai sesi chat ===
+    function startChatSession() {
+        if (welcomeArea && chatWrapper && welcomeArea.style.display !== 'none') {
+            welcomeArea.style.display = 'none';
+            chatWrapper.style.display = 'flex';
+            // Tambahkan pesan pembuka bot di sini
+            appendMessage('Halo! Saya Nareta ✨, Asisten Virtual rnara.id. Ada yang bisa saya bantu?', 'bot-message');
+            scrollToBottom();
+        }
+    }
+
+    // === Fungsi untuk memproses teks dengan Regex ===
+    function processMarkdown(text) {
+        // Blok kode (dikelilingi oleh ```)
+        const codeBlockRegex = /```([\s\S]*?)```/g;
+        text = text.replace(codeBlockRegex, (match, code) => {
+            const pre = document.createElement('pre');
+            pre.className = 'code-block';
+            
+            const codeEl = document.createElement('code');
+            codeEl.textContent = code.trim();
+            pre.appendChild(codeEl);
+            
+            const copyButton = document.createElement('button');
+            copyButton.className = 'copy-button';
+            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+            copyButton.onclick = () => {
+                navigator.clipboard.writeText(code.trim());
+                copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 2000);
+            };
+            pre.appendChild(copyButton);
+
+            return pre.outerHTML;
+        });
+
+        // Daftar (diawali dengan *, -, atau angka)
+        const listRegex = /(\* |\- |\d+\. ).*/g;
+        text = text.replace(listRegex, '<ul>$&</ul>'); // Tambahkan tag <ul>
+
+        // Bold (teks di antara **)
+        const boldRegex = /\*\*(.*?)\*\*/g;
+        text = text.replace(boldRegex, '<strong>$1</strong>');
+
+        // Italic (teks di antara *)
+        const italicRegex = /\*(.*?)\*/g;
+        text = text.replace(italicRegex, '<em>$1</em>');
+        
+        return text;
+    }
+
+    // === Fungsi untuk mengirim pesan ke PHP ===
+    function sendMessage() {
+        const message = userInput.value.trim();
+        if (message === '') return;
+
+        appendMessage(message, 'user-message');
+        userInput.value = '';
+
+        const typingIndicator = document.createElement('div');
+        typingIndicator.classList.add('message', 'bot-message', 'typing');
+        typingIndicator.textContent = 'Nareta sedang mengetik...';
+        chatBody.appendChild(typingIndicator);
+        scrollToBottom();
+
+        fetch('php/chatbot.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            chatBody.removeChild(typingIndicator);
+            appendMessage(data.reply, 'bot-message');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            chatBody.removeChild(typingIndicator);
+            appendMessage('Maaf, Nareta sedang tidak bisa merespons. Silakan coba lagi nanti.', 'bot-message');
+        });
+    }
+
+    // --- Panggil updateTime setiap detik ---
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // --- Fokuskan ke input field saat halaman dimuat ---
+    userInput.focus();
+
+    // --- Mulai sesi chat saat input pertama kali aktif atau ada pesan yang dikirim ---
+    userInput.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== 'Tab' && event.key !== 'Shift' && event.key !== 'Meta' && event.key !== 'Control' && event.key !== 'Alt') {
+            startChatSession();
+        }
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+
+    sendButton.addEventListener('click', () => {
+        startChatSession();
+        sendMessage();
+    });
+    
+    // Panggil startChatSession() saat user klik input
+    userInput.addEventListener('focus', startChatSession);
+});
+    </script>
+</body>
+</html>

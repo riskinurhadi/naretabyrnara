@@ -1,0 +1,176 @@
+/* Pastikan body punya tinggi minimal agar fixed position terlihat */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    min-height: 100vh; /* Penting agar fixed position bisa relatif terhadap viewport */
+    display: flex;
+    flex-direction: column; /* Untuk menata konten utama */
+}
+
+/* Konten utama agar tidak tertutup chatbot */
+main {
+    flex-grow: 1; /* Agar main mengisi ruang yang tersedia */
+    padding-bottom: 100px; /* Beri ruang di bawah agar chatbot tidak menutupi konten */
+}
+
+/* --- CHAT TOGGLE BUTTON (ICON) --- */
+.chat-toggle-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #007bff; /* Warna ikon */
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%; /* Membuat lingkaran */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8em;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Pastikan di atas elemen lain */
+    transition: transform 0.2s ease-in-out;
+}
+
+.chat-toggle-button:hover {
+    transform: scale(1.05);
+}
+
+
+/* --- CHAT CONTAINER --- */
+.chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    width: 350px; /* Ukuran chatbot yang lebih pas */
+    max-height: 80vh; /* Agar tidak terlalu tinggi di layar kecil */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1001; /* Pastikan di atas tombol toggle */
+
+    /* Transisi untuk muncul/sembunyi */
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* Kelas untuk menyembunyikan chatbot */
+.chat-container.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px); /* Agak bergeser ke bawah saat hilang */
+    pointer-events: none; /* Agar tidak bisa diklik saat tersembunyi */
+}
+
+.chat-header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.2em;
+    display: flex; /* Untuk menata judul dan tombol tutup */
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.close-chat-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0 5px;
+    transition: color 0.2s ease;
+}
+
+.close-chat-button:hover {
+    color: #f8f9fa;
+}
+
+
+.chat-body {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    max-height: 400px; /* Tinggi maksimal body chat */
+    display: flex;
+    flex-direction: column;
+}
+
+.message {
+    padding: 10px 12px; /* Sedikit padding horizontal */
+    margin-bottom: 8px; /* Sedikit kurang margin */
+    border-radius: 15px; /* Lebih bulat */
+    max-width: 80%; /* Batasi lebar pesan */
+    word-wrap: break-word; /* Pastikan teks tidak meluap */
+}
+
+.user-message {
+    background-color: #e0f7fa; /* Warna user lebih terang */
+    align-self: flex-end; /* Pesan user di kanan */
+    color: #333;
+}
+
+.bot-message {
+    background-color: #f1f8e9; /* Warna bot lebih terang */
+    align-self: flex-start; /* Pesan bot di kiri */
+    color: #333;
+}
+
+.chat-footer {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9; /* Background footer */
+}
+
+.chat-footer input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px; /* Lebih bulat */
+    margin-right: 10px;
+    outline: none; /* Hilangkan outline fokus default */
+}
+
+.chat-footer button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Padding lebih */
+    border-radius: 20px; /* Lebih bulat */
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.chat-footer button:hover {
+    background-color: #218838;
+}
+
+/* Media Queries untuk Responsif (opsional tapi disarankan) */
+@media (max-width: 500px) {
+    .chat-container {
+        width: 90%;
+        right: 5%;
+        left: 5%;
+        bottom: 15px;
+        max-height: 90vh;
+    }
+    .chat-toggle-button {
+        bottom: 15px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+    }
+}
