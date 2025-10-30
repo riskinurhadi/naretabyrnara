@@ -849,7 +849,7 @@ section[id] {
 
             <div class="col-lg-6 text-center text-lg-start order-2 order-lg-1">
                 <p class="badge-pill-custom">
-                    <i class="bi bi-lightbulb-fill me-2"></i> Solusi
+                    <i class="bi bi-lightbulb-fill me-2"></i> Solusi 
                 </p>
                 <h1 class="display-6 fw-bold mb-4">Percepat pertumbuhan bisnis melalui Web dan Desain inovatif</h1>
                 <p class="lead mb-4">
