@@ -32,14 +32,21 @@ include 'koneksi.php';
 
 <style>
         :root {
-            --primary-color:#167cdb;
+            /* Updated palette for a modern glassmorphism look */
+            --primary-color: #6c63ff; /* soft indigo */
+            --primary-color-2: #7b8cff;
             --light-gray: #6c757d;
-            --dark-gray: #555;
+            --dark-gray: #444;
+            --card-bg: rgba(255,255,255,0.55);
+            --card-border: rgba(255,255,255,0.18);
+            --glass-overlay: rgba(255,255,255,0.22);
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
+            background: linear-gradient(135deg, #f7f9ff 0%, #eef2ff 50%, #fbfbff 100%);
+            -webkit-font-smoothing: antialiased;
+            color: #111;
         }
 
         /* --- DESKTOP NAVBAR STYLES  --- */
@@ -48,15 +55,16 @@ include 'koneksi.php';
             top: 1rem;
             z-index: 1000;
             padding: 0 1rem;
-            /*height: 50px;*/
         }
 
         .navbar-custom {
-            background-color: #ffffff;
+            background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.45));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--card-border);
             border-radius: 50px;
             padding: 0.75rem 1.5rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease-in-out;
+            transition: all 0.25s ease-in-out;
             height: 65px;
         }
 
@@ -92,12 +100,12 @@ include 'koneksi.php';
     
     /* Visuals */
     display: flex; /* Untuk menata item di dalamnya */
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.5));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     padding: 0.6rem 0;
     border-radius: 50px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
 }
 
 .mobile-nav-item {
@@ -125,33 +133,47 @@ include 'koneksi.php';
         
 /* --- STATS CARD SECTION STYLES --- */
 .stats-section-cards {
-    background-color: #f8f9fa; 
+    background-color: transparent; 
 }
 
-.stat-card {
-    border: none;
-    border-radius: 1rem; 
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease-in-out;
-}
+        /* Glassy cards used across the site */
+        .card,
+        .stat-card,
+        .pricing-card,
+        .portfolio-card,
+        .testimonial-card,
+        .info-card,
+        .cta-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            box-shadow: 0 12px 40px rgba(20,20,40,0.06);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            color: #111;
+        }
 
-.stat-card:hover {
-    transform: translateY(-5px); 
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-}
+        .card:hover,
+        .stat-card:hover,
+        .portfolio-card:hover,
+        .pricing-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 50px rgba(20,20,40,0.09);
+        }
 
-.stat-card .icon-wrapper {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 60px;
-    height: 60px;
-    background-color: #eef2ff;
-    color: var(--primary-color);
-    border-radius: 50%;
-    font-size: 1.75rem; 
-}
-        
+        .stat-card .icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(108,99,255,0.12), rgba(123,140,255,0.08));
+            color: var(--primary-color);
+            border-radius: 50%;
+            font-size: 1.75rem;
+            backdrop-filter: blur(6px);
+        }
         
 
     /* Penyesuaian padding body di mobile agar konten tidak tertutup navbar bawah */
@@ -164,7 +186,7 @@ include 'koneksi.php';
         /* --- HERO SECTION STYLES --- */
         .hero-section {
             padding: 8rem 0 6rem 0;
-            background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%);
+            background: linear-gradient(180deg, rgba(236,243,255,0.6) 0%, rgba(255,255,255,0.2) 70%);
             margin-top: -5rem;
             z-index: 1;
         }
@@ -183,25 +205,25 @@ include 'koneksi.php';
             font-size:.85rem;
             font-weight:600;
             color:var(--primary-color);
-            background-color:#e2e8ff;
+            background-color: rgba(108,99,255,0.08);
             border-radius:50px;
             margin-bottom:1.5rem
           }
           .btn-primary-custom {
-              background-color:var(--primary-color);
-              border-color:var(--primary-color);
-              padding:.75rem 1.5rem;
-              font-weight:600;
-              border-radius:50px;
-              transition:all .3s ease;
+              background: linear-gradient(90deg, var(--primary-color), var(--primary-color-2));
+              border: none;
+              color: #fff;
+              padding: .75rem 1.5rem;
+              font-weight: 600;
+              border-radius: 50px;
+              transition: transform .18s ease, box-shadow .18s ease;
               height: 50px;
-              width:auto;
+              width: auto;
+              box-shadow: 0 8px 30px rgba(108,99,255,0.12);
             }
               .btn-primary-custom:hover{
-                background-color:#5851d8;
-                border-color:#5851d8;
-                transform:translateY(-2px);
-                box-shadow:0 4px 15px rgba(0,0,0,.1)
+                transform: translateY(-3px);
+                box-shadow: 0 18px 40px rgba(108,99,255,0.12);
               }
           .hero-illustration {
     max-width: 80%; 
@@ -210,7 +232,7 @@ include 'koneksi.php';
           
           /* --- ABOUT US SECTION --- */
 .about-us-section {
-    background-color: #ffffff;
+    background-color: transparent;
 }
 
 .checklist-icon {
@@ -220,24 +242,25 @@ include 'koneksi.php';
 }
 
 .about-us-section img {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); 
+    box-shadow: 0 12px 36px rgba(20,20,40,0.06); 
+    border-radius: .75rem;
 }
 
 /* --- HOW WE WORK SECTION --- */
 .process-item {
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
+    background: linear-gradient(180deg, rgba(255,255,255,0.56), rgba(255,255,255,0.42));
+    border: 1px solid rgba(0,0,0,0.03);
     border-radius: 1rem;
     padding: 1.5rem 2rem;
     margin-bottom: 1.5rem;
-    position: relative; 
-    overflow: hidden; 
-    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease;
 }
 
 .process-item:hover {
-    transform: scale(1.02); 
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 36px rgba(20,20,40,0.06);
 }
 
 /* Trik untuk membuat angka di background */
@@ -249,7 +272,7 @@ include 'koneksi.php';
     transform: translateY(-50%);
     font-size: 5rem;
     font-weight: 800; 
-    color: rgba(0, 0, 0, 0.05); 
+    color: rgba(0, 0, 0, 0.03); 
     z-index: 0; 
 }
 
@@ -274,7 +297,7 @@ include 'koneksi.php';
 
 /* --- SERVICES SECTION --- */
 .services-section {
-    background-color: #ffffff;
+    background-color: transparent;
 }
 
 .title-divider {
@@ -291,11 +314,12 @@ include 'koneksi.php';
     justify-content: center;
     width: 65px;
     height: 65px;
-    background-color: #eef2ff; 
+    background: linear-gradient(135deg, rgba(108,99,255,0.12), rgba(123,140,255,0.08)); 
     color: var(--primary-color);
     border-radius: 1rem;
     font-size: 2rem;
     flex-shrink: 0;
+    backdrop-filter: blur(6px);
 }
 
 .learn-more-link {
@@ -331,19 +355,6 @@ include 'koneksi.php';
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.portfolio-card {
-    border: none;
-    border-radius: 1rem;
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease-in-out;
-    overflow: hidden; 
-}
-
-.portfolio-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-}
-
 .portfolio-card .portfolio-img-wrapper {
     overflow: hidden;
 }
@@ -368,23 +379,11 @@ include 'koneksi.php';
 }
 
 /* --- PRICING SECTION --- */
-.pricing-card {
-    border: 1px solid #e9ecef;
-    border-radius: 1rem;
-    transition: all 0.3s ease;
-    background-color: #ffffff;
-}
-
-.pricing-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-}
-
+.pricing-card {}
 
 .pricing-card h4 {
     font-size: 1.25rem;
 }
-
 
 .pricing-card p, .pricing-card ul li {
     font-size: 0.9rem;
@@ -406,19 +405,17 @@ include 'koneksi.php';
     line-height: 1.5;
 }
 
-
 .highlighted-plan {
-    background-color: var(--primary-color);
+    background: linear-gradient(180deg, var(--primary-color), var(--primary-color-2));
     color: #ffffff;
     border: none;
-    transform: scale(1.05);
+    transform: scale(1.03);
     z-index: 10;
 }
 
 .highlighted-plan:hover {
-    transform: scale(1.08);
+    transform: scale(1.05);
 }
-
 
 .highlighted-plan .price-amount,
 .highlighted-plan .price-period,
@@ -429,7 +426,6 @@ include 'koneksi.php';
 .highlighted-plan ul li i {
     color: #ffffff;
 }
-
 
 .popular-badge {
     position: absolute;
@@ -442,20 +438,15 @@ include 'koneksi.php';
     border-radius: 50px;
     font-size: 0.8rem;
     font-weight: 600;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 /* --- TESTIMONIALS SECTION --- */
 .testimonials-section {
-    background-color: #ffffff;
+    background-color: transparent;
 }
 
-.testimonial-card {
-    border: 1px solid #e9ecef;
-    border-radius: 1rem;
-    padding: 1rem;
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.03);
-}
+.testimonial-card { padding: 1rem; }
 
 .testimonial-text {
     font-style: italic;
@@ -473,7 +464,6 @@ include 'koneksi.php';
     color: #ffc107; 
 }
 
-
 .swiper-pagination-bullet {
     width: 10px;
     height: 10px;
@@ -486,11 +476,7 @@ include 'koneksi.php';
 }
 
 /* --- CONTACT SECTION --- */
-.info-card {
-    border: none;
-    border-radius: 1rem;
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
-}
+.info-card { }
 
 .info-icon {
     display: inline-flex;
@@ -498,232 +484,123 @@ include 'koneksi.php';
     justify-content: center;
     width: 60px;
     height: 60px;
-    background-color: #eef2ff;
+    background: linear-gradient(135deg, rgba(108,99,255,0.12), rgba(123,140,255,0.08));
     color: var(--primary-color);
     border-radius: 50%;
     font-size: 1.75rem;
 }
 
 /* Kustomisasi Form Kontak */
-.contact-form .form-control,
-.contact-form .form-select,
-.contact-form .input-group-text {
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
-    padding-top: 0.9rem;
-    padding-bottom: 0.9rem;
-}
+        .contact-form .form-control,
+        .contact-form .form-select,
+        .contact-form .input-group-text {
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.14);
+            padding-top: 0.9rem;
+            padding-bottom: 0.9rem;
+            backdrop-filter: blur(6px);
+        }
 
-.contact-form .input-group-text {
+        .contact-form .input-group-text {
     border-right: none;
     border-top-left-radius: 0.75rem;
     border-bottom-left-radius: 0.75rem;
     color: var(--primary-color);
 }
 
-.contact-form .form-control,
-.contact-form .form-select {
+        .contact-form .form-control,
+        .contact-form .form-select {
     border-left: none;
     border-top-right-radius: 0.75rem;
     border-bottom-right-radius: 0.75rem;
 }
 
-.contact-form .form-control:focus,
-.contact-form .form-select:focus {
+        .contact-form .form-control:focus,
+        .contact-form .form-select:focus {
     box-shadow: none;
     border-color: var(--primary-color);
 }
 
-.contact-form textarea.form-control {
+        .contact-form textarea.form-control {
     border-left: none;
 }
 
 /* --- FOOTER SECTION (Revised Colors) --- */
-/* --- FOOTER SECTION --- */
-#footer {
-    font-size: 14px;
-}
+#footer { font-size: 14px; }
 
-#footer .footer-top {
-    background-color: #E9ECEF; 
-    color: #32353a;
-   padding: 60px 0 5px 0;
-}
+#footer .footer-top { background-color: rgba(233,236,239,0.6); color: #32353a; padding: 60px 0 5px 0; }
 
-#footer .footer-top .footer-info .logo span {
-    color:#32353a; 
-}
+#footer .footer-top .footer-info .logo span { color:#32353a; }
 
-#footer .footer-top .footer-info p {
-    font-size: 14px;
-    padding-top: 1rem;
-}
+#footer .footer-top .footer-info p { font-size: 14px; padding-top: 1rem; }
 
-#footer .footer-top .social-links a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color:#32353a;
-    margin-right: 10px;
-    transition: all 0.3s ease;
-}
+#footer .footer-top .social-links a { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); color:#32353a; margin-right: 10px; transition: all 0.3s ease; }
 
-#footer .footer-top .social-links a:hover {
-    color: #484d55;
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
+#footer .footer-top .social-links a:hover { color: #484d55; background-color: var(--primary-color); border-color: var(--primary-color); }
 
-#footer .footer-top h4 {
-    font-size: 16px;
-    font-weight: bold;
-    color: #32353a;
-    position: relative;
-    padding-bottom: 12px;
-}
+#footer .footer-top h4 { font-size: 16px; font-weight: bold; color: #32353a; position: relative; padding-bottom: 12px; }
 
-#footer .footer-top .footer-links {
-    margin-bottom: 30px;
-}
+#footer .footer-top .footer-links { margin-bottom: 30px; }
 
-#footer .footer-top .footer-links ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+#footer .footer-top .footer-links ul { list-style: none; padding: 0; margin: 0; }
 
-#footer .footer-top .footer-links ul li {
-    padding: 10px 0;
-    display: flex;
-    align-items: center;
-}
+#footer .footer-top .footer-links ul li { padding: 10px 0; display: flex; align-items: center; }
 
-#footer .footer-top .footer-links ul i {
-    padding-right: 8px;
-    color: var(--primary-color);
-    font-size: 12px;
-}
+#footer .footer-top .footer-links ul i { padding-right: 8px; color: var(--primary-color); font-size: 12px; }
 
-#footer .footer-top .footer-links ul a {
-    color: #32353a;
-    transition: 0.3s;
-    display: inline-block;
-    line-height: 1;
-    text-decoration: none;
-}
+#footer .footer-top .footer-links ul a { color: #32353a; transition: 0.3s; display: inline-block; line-height: 1; text-decoration: none; }
 
-#footer .footer-top .footer-links ul a:hover {
-    color: #45494e;
-}
+#footer .footer-top .footer-links ul a:hover { color: #45494e; }
 
-#footer .footer-top .footer-contact p {
-    line-height: 26px;
-}
+#footer .footer-top .footer-contact p { line-height: 26px; }
 
-#footer .footer-bottom {
-    background-color: #E9ECEF; 
-    color: #32353a;
-    padding: 5px 0;
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
+#footer .footer-bottom { background-color: rgba(233,236,239,0.6); color: #32353a; padding: 5px 0; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); }
 
-#footer .copyright {
-    margin-bottom: 5px;
-}
+#footer .copyright { margin-bottom: 5px; }
 
-#footer .credits {
-    font-size: 13px;
-}
+#footer .credits { font-size: 13px; }
 
-#footer .credits a {
-    color: var(--primary-color);
-    text-decoration: none;
-    transition: 0.3s;
-}
+#footer .credits a { color: var(--primary-color); text-decoration: none; transition: 0.3s; }
 
-#footer .credits a:hover {
-    color: #41444b;
-}
-
+#footer .credits a:hover { color: #41444b; }
 
 /* --- CTA SECTION  --- */
-.cta-section {
-    background-color: #f0f2f5;
-}
+        .cta-section { background: transparent; }
 
-.cta-card {
-    background: #ffffff;
-    border-radius: 1.5rem;
-    padding: 2.5rem; 
-    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    width: 100%; 
-    max-width: auto; 
-    max-height: 600px;
-    margin: 0
-}
+        .cta-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.64), rgba(255,255,255,0.5));
+            border-radius: 1.25rem;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(20,20,40,0.06);
+            overflow: hidden;
+            width: 100%;
+            margin: 0;
+        }
 
 /* Mengatur ulang ukuran elemen di dalam card */
-.cta-content h2 {
-    font-size: 2.0rem; 
-    line-height: 1.3;
-}
+ .cta-content h2 { font-size: 2.0rem; line-height: 1.3; }
 
-.cta-content p.text-muted {
-    font-size: 1rem;  
-}
+.cta-content p.text-muted { font-size: 1rem; }
 
-.cta-person-img {
-    transform: scale(1.0) translateX(10px);
-}
+.cta-person-img { transform: scale(1.0) translateX(10px); }
 
-.btn-outline-custom {
-    color: var(--dark-gray);
-    border: 1px solid #dee2e6;
-    font-weight: 500;
-    transition: all 0.3s ease; 
-    font-size: 0.9rem; 
-    padding: 0.5rem 1rem;
-}
+.btn-outline-custom { color: var(--dark-gray); border: 1px solid rgba(0,0,0,0.06); font-weight: 500; transition: all 0.3s ease; font-size: 0.9rem; padding: 0.5rem 1rem; }
 
-.btn-outline-custom:hover {
-    color: var(--primary-color);
-    border-color: var(--primary-color);
-    background-color: #eef2ff;
-}
+.btn-outline-custom:hover { color: var(--primary-color); border-color: var(--primary-color); background-color: rgba(108,99,255,0.06); }
 
 .floating-nugget {
     position: absolute;
-    background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 0.75rem 1rem;
+    background: rgba(255,255,255,0.48);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 0.65rem 0.9rem;
     border-radius: 0.75rem;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(20,20,40,0.06);
     display: inline-flex;
     align-items: center;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
-}
-
-/* Floating Nuggets di Desktop */
-.floating-nugget {
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 0.75rem 1rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    display: inline-flex;
-    align-items: center;
-    font-size: 0.9rem;
-    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.14);
 }
 
 /* --- Floating CS Button --- */
@@ -747,40 +624,19 @@ include 'koneksi.php';
     transition: all 0.3s ease;
 }
 
-.floating-cs-button:hover {
-    transform: scale(1.1);
-    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3);
-}
+.floating-cs-button:hover { transform: scale(1.1); box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.28); }
 
 /* Menambahkan 'ruang' di atas section saat navigasi anchor link */
-section[id] {
-  scroll-margin-top: 100px; 
-}
+section[id] { scroll-margin-top: 100px; }
 
 /* =========================== */
 /* KLIEN & PARTNER SECTION STYLES */
 /* =========================== */
-        #clients-partners {
-    background-color: #f8f9fa; /* Mengubah warna latar belakang section */
-}
+        #clients-partners { background-color: transparent; }
 
-#clients-partners .client-logo {
-    /* Menjadikan logo terlihat soft */
-    opacity: 0.75;
-    /* Menambahkan efek transisi halus saat di hover */
-    transition: all 0.3s ease;
-    /* Mengatur ukuran tetap agar semua logo seragam */
-    width: auto;
-    height: 80px; 
-    object-fit: contain;
-    border-radius: 0.5rem;
-}
+#clients-partners .client-logo { opacity: 0.85; transition: all 0.3s ease; width: auto; height: 80px; object-fit: contain; border-radius: 0.5rem; }
 
-#clients-partners .client-logo:hover {
-    /* Membuat logo lebih menonjol saat mouse di atasnya */
-    opacity: 1;
-    transform: scale(1.05); /* Efek perbesaran saat di hover */
-} 
+#clients-partners .client-logo:hover { opacity: 1; transform: scale(1.05); }
 
  </style>
 
