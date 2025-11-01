@@ -379,7 +379,7 @@ include 'koneksi.php';
 }
 
 /* --- PRICING SECTION --- */
-.pricing-card {}
+/* .pricing-card {} */
 
 .pricing-card h4 {
     font-size: 1.25rem;
@@ -476,7 +476,7 @@ include 'koneksi.php';
 }
 
 /* --- CONTACT SECTION --- */
-.info-card { }
+/* .info-card { } */
 
 .info-icon {
     display: inline-flex;
