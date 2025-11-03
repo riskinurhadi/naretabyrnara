@@ -1,5 +1,8 @@
 <?php
-// include 'koneksi.php'; // Asumsikan Anda punya file ini untuk koneksi database ($koneksi)
+session_start();
+// PASTIKAN FILE INI ADA DAN KONFIGURASINYA BENAR
+include 'koneksi.php'; 
+
 $success_message = '';
 $error_message = '';
 
@@ -16,21 +19,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // HASH PASSWORD! Ini sangat penting.
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
+        // --- INI ADALAH BAGIAN YANG DIPERBAIKI ---
         
-        // Query untuk insert ke database
-        $stmt = $koneksi->prepare("INSERT INTO tbl_users (nama_lengkap, username, password, role) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $nama_lengkap, $username, $hashed_password, $role);
-
-        if ($stmt->execute()) {
-            $success_message = "User baru (".$username.") berhasil ditambahkan.";
+        // 1. Cek dulu apakah username sudah ada
+        $stmt_check = $koneksi->prepare("SELECT id_user FROM tbl_users WHERE username = ?");
+        $stmt_check->bind_param("s", $username);
+        $stmt_check->execute();
+        $result_check = $stmt_check->get_result();
+        
+        if ($result_check->num_rows > 0) {
+            // Jika username sudah ada
+            $error_message = "Username '$username' sudah terdaftar. Silakan gunakan username lain.";
         } else {
-            $error_message = "Gagal menambahkan user. Error: " . $stmt->error;
+            // 2. Jika aman, masukkan data baru
+            $stmt = $koneksi->prepare("INSERT INTO tbl_users (nama_lengkap, username, password, role) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $nama_lengkap, $username, $hashed_password, $role);
+
+            if ($stmt->execute()) {
+                $success_message = "User baru (".$username.") berhasil ditambahkan.";
+            } else {
+                // Tampilkan error jika query gagal
+                $error_message = "Gagal menambahkan user. Error: " . $stmt->error;
+            }
+            $stmt->close();
         }
-        $stmt->close();
-        $koneksi->close();
+        $stmt_check->close();
         
-        
-         
+        // --- AKHIR BAGIAN PERBAIKAN ---
+
+        /* // --- BAGIAN TESTING INI SUDAH DIHAPUS ---
+        $success_message = "TESTING: User '$username' dengan role '$role' berhasil dibuat (password: $password).";
+        // --- AKHIR BAGIAN TESTING ---
+        */
     }
 }
 ?>
