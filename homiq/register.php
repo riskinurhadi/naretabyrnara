@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // HASH PASSWORD! Ini sangat penting.
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        /*
+        
         // Query untuk insert ke database
         $stmt = $koneksi->prepare("INSERT INTO tbl_users (nama_lengkap, username, password, role) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("ssss", $nama_lengkap, $username, $hashed_password, $role);
@@ -28,11 +28,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         $stmt->close();
         $koneksi->close();
-        */
         
-        // --- HANYA UNTUK TESTING (Hapus jika sudah konek DB) ---
-        $success_message = "TESTING: User '$username' dengan role '$role' berhasil dibuat (password: $password).";
-        // --- AKHIR BAGIAN TESTING ---
+        
+         
     }
 }
 ?>
