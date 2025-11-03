@@ -1,7 +1,5 @@
 <?php
-// session_start() harus ada di setiap halaman yang menggunakan session
-// Kita akan panggil ini di halaman utamanya (index.php, manajemen_kamar.php)
-// tapi kita siapkan variabelnya di sini.
+// session_start() akan dipanggil di halaman utamanya
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -9,6 +7,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $nama_user = $_SESSION['nama_lengkap'] ?? 'User';
 $role_user = $_SESSION['role'] ?? 'guest';
+$inisial_user = htmlspecialchars(strtoupper(substr($nama_user, 0, 1)));
 
 ?>
 <!DOCTYPE html>
@@ -16,6 +15,7 @@ $role_user = $_SESSION['role'] ?? 'guest';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -24,13 +24,14 @@ $role_user = $_SESSION['role'] ?? 'guest';
 
     <style>
         :root {
-            /* Warna biru dari gambar referensi (disesuaikan) */
-            --brand-blue: #0d6efd; /* Bootstrap Primary Blue */
-            --sidebar-bg: #001f3f; /* Biru Navy Tua (Mirip Puzzler) */
-            --sidebar-link: #adb5bd;
-            --sidebar-link-active: #ffffff;
-            --sidebar-link-hover: #f8f9fa;
-            --content-bg: #f8f9fa;
+            --brand-blue: #0d6efd; /* Bootstrap Primary Blue (sesuai referensi) */
+            --brand-dark: #212529;
+            --brand-gray: #6c757d;
+            --brand-light-gray: #f8f9fa;
+            --sidebar-bg: #ffffff;
+            --content-bg: #f8f9fa; /* Latar belakang area konten */
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --border-color: #dee2e6;
         }
 
         body {
@@ -40,7 +41,7 @@ $role_user = $_SESSION['role'] ?? 'guest';
             min-height: 100vh;
         }
 
-        /* --- Sidebar --- */
+        /* --- Sidebar (Light Theme) --- */
         .sidebar {
             width: 260px;
             background-color: var(--sidebar-bg);
@@ -48,101 +49,107 @@ $role_user = $_SESSION['role'] ?? 'guest';
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
-            transition: width 0.3s ease;
+            border-right: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
         }
         
         .sidebar-header {
-            text-align: center;
             margin-bottom: 20px;
+            padding-left: 10px; /* Sejajarkan dengan link */
         }
         .sidebar-header .logo {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--sidebar-link-active);
+            color: var(--brand-dark); /* Teks logo jadi gelap */
             text-decoration: none;
-            /* Placeholder logo 'A' seperti di login */
             display: flex;
             align-items: center;
-            justify-content: center;
         }
         .sidebar-header .logo .logo-icon {
             width: 40px;
             height: 40px;
             background-color: var(--brand-blue);
+            color: white;
             border-radius: 8px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            margin-right: 10px;
+            margin-right: 12px;
         }
 
         .sidebar-nav {
             list-style: none;
             padding: 0;
             margin: 0;
-            flex-grow: 1; /* Mendorong logout ke bawah */
+            flex-grow: 1; 
         }
         .sidebar-nav .nav-item {
             margin-bottom: 5px;
         }
         .sidebar-nav .nav-link {
-            color: var(--sidebar-link);
+            color: var(--brand-gray); /* Teks link jadi abu-abu */
             text-decoration: none;
             padding: 12px 15px;
             display: flex;
             align-items: center;
             border-radius: 8px;
+            font-weight: 500;
             transition: all 0.3s ease;
         }
         .sidebar-nav .nav-link i {
             margin-right: 12px;
             font-size: 1.2rem;
-            width: 20px; /* Jaga alignment icon */
+            width: 20px;
         }
         .sidebar-nav .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--sidebar-link-hover);
+            background-color: var(--brand-light-gray); /* Hover abu-abu muda */
+            color: var(--brand-blue); /* Teks hover jadi biru */
         }
         .sidebar-nav .nav-link.active {
-            background-color: var(--brand-blue);
-            color: var(--sidebar-link-active);
+            background-color: var(--brand-blue); /* Latar belakang aktif biru */
+            color: #ffffff; /* Teks aktif putih */
             font-weight: 500;
         }
 
         .sidebar-footer {
             margin-top: auto;
         }
-
+        .sidebar-footer .nav-link {
+            color: var(--brand-gray);
+        }
+        .sidebar-footer .nav-link:hover {
+            background-color: #fde2e4; /* Hover merah muda untuk logout */
+            color: #dc3545;
+        }
+        
         /* --- Main Content --- */
         .main-content {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            overflow: auto; /* Untuk scrolling konten */
+            overflow: auto;
         }
 
         /* --- Top Bar (Header) --- */
         .top-bar {
             background-color: #ffffff;
             padding: 15px 30px;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
-            justify-content: flex-end; /* Pindahkan search ke kiri nanti */
+            justify-content: flex-end;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); */
         }
         
-        .user-profile .dropdown-toggle::after {
-            display: none; /* Sembunyikan panah default */
-        }
+        .user-profile .dropdown-toggle::after { display: none; }
         .user-profile .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             margin-right: 10px;
             object-fit: cover;
-            background-color: var(--brand-blue); /* Placeholder avatar */
+            background-color: var(--brand-blue);
             color: white;
             display: inline-flex;
             align-items: center;
@@ -155,15 +162,15 @@ $role_user = $_SESSION['role'] ?? 'guest';
         }
         .user-profile .user-name {
             font-weight: 600;
-            color: #333;
+            color: var(--brand-dark);
         }
         .user-profile .user-role {
             font-size: 0.85rem;
-            color: #6c757d;
+            color: var(--brand-gray);
         }
         .dropdown-menu-end {
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
             border: none;
         }
 
@@ -173,7 +180,7 @@ $role_user = $_SESSION['role'] ?? 'guest';
             flex-grow: 1;
         }
         
-        /* Style untuk Tombol Biru (Add New) */
+        /* --- Tombol --- */
         .btn-brand {
             background-color: var(--brand-blue);
             border-color: var(--brand-blue);
@@ -189,54 +196,55 @@ $role_user = $_SESSION['role'] ?? 'guest';
             color: #fff;
         }
         
-        /* Style untuk Tabel (dari referensi) */
-        .card-table {
+        /* --- Style Kartu Dashboard (BARU) --- */
+        .stat-card {
+            background-color: #ffffff;
             border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            overflow: hidden; /* Penting untuk border-radius tabel */
+            border-radius: 12px; /* Lebih rounded */
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .table {
-            margin-bottom: 0; /* Hapus margin bawah default */
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
         }
-        .table thead th {
-            background-color: #f8f9fa; /* Header tabel abu-abu muda */
-            border-bottom: 2px solid #dee2e6;
-            font-weight: 600;
-            color: #495057;
-            vertical-align: middle;
+        .stat-card-title {
             font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--brand-gray);
             text-transform: uppercase;
+            margin-bottom: 10px;
         }
-        .table tbody td {
-            vertical-align: middle;
-            color: #333;
-            font-weight: 500;
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--brand-dark);
         }
-        .table tbody tr:hover {
-            background-color: #f0f7ff; /* Hover biru muda */
+        .stat-card-icon {
+            font-size: 2.5rem;
+            color: var(--brand-blue);
+            opacity: 0.7;
         }
         
-        /* Style untuk Status (Pending, Active, dll) */
-        .status-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            font-size: 0.8rem;
+        /* --- Style Kartu Konten Utama (BARU) --- */
+        .main-card {
+            background-color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden; /* Penting untuk tabel/header */
+        }
+        .main-card .card-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 25px;
             font-weight: 600;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
+            font-size: 1.1rem;
+            color: var(--brand-dark);
         }
-        .status-badge-active {
-            background-color: #e6f7f0;
-            color: #198754;
-        }
-        .status-badge-pending {
-            background-color: #fffbeb;
-            color: #ffc107;
-        }
-        .status-badge-inactive {
-            background-color: #f8d7da;
-            color: #dc3545;
+        .main-card .card-body {
+            padding: 25px;
         }
 
     </style>
@@ -253,8 +261,7 @@ $role_user = $_SESSION['role'] ?? 'guest';
         
         <ul class="sidebar-nav">
             <li class="nav-item">
-                <a class="nav-link active" href="index.php">
-                    <i class="bi bi-grid-fill"></i>
+                <a class="nav-link" href="index.php"> <i class="bi bi-grid-fill"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
@@ -272,7 +279,7 @@ $role_user = $_SESSION['role'] ?? 'guest';
             </li>
             
             <?php if ($role_user == 'admin'): ?>
-                <hr class="text-white-50 my-2">
+                <hr class_ ="my-2" style="border-color: #e9ecef;">
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="bi bi-building-fill-gear"></i>
@@ -280,8 +287,7 @@ $role_user = $_SESSION['role'] ?? 'guest';
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-key-fill"></i>
+                    <a class="nav-link" href="manajemen_kamar.php"> <i class="bi bi-key-fill"></i>
                         <span>Manajemen Kamar</span>
                     </a>
                 </li>
@@ -314,10 +320,10 @@ $role_user = $_SESSION['role'] ?? 'guest';
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="d-flex align-items-center">
                             <div class="user-avatar">
-                                <?php echo htmlspecialchars(strtoupper(substr($nama_user, 0, 1))); ?>
+                                <?php echo $inisial_user; ?>
                             </div>
                             <div class="user-info d-none d-md-block">
-                                <span class="user-name"><?php echo htmlspecialchars($nama_user); ?></span><br>
+                                <span class="user-name"><?php echo htmlspecialchars($nama_user); ?></span>
                                 <span class="user-role"><?php echo htmlspecialchars($role_user); ?></span>
                             </div>
                         </div>
