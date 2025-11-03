@@ -158,7 +158,7 @@ $inisial_user = htmlspecialchars(strtoupper(substr($nama_user, 0, 1)));
         }
         .user-profile .user-info {
             line-height: 1.2;
-            text-align: right;
+            text-align: left;
         }
         .user-profile .user-name {
             font-weight: 600;
