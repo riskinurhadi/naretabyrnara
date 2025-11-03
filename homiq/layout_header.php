@@ -276,7 +276,7 @@ $inisial_user = htmlspecialchars(strtoupper(substr($nama_user, 0, 1)));
             <li class="nav-item">
                 <a class="nav-link" href="#">
                     <i class="bi bi-person-fill"></i>
-                    <span>Tamu</span>
+                    <span>Daftar Tamu</span>
                 </a>
             </li>
             
@@ -285,18 +285,18 @@ $inisial_user = htmlspecialchars(strtoupper(substr($nama_user, 0, 1)));
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="bi bi-building-fill-gear"></i>
-                        <span>Manajemen Properti</span>
+                        <span>Properti</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="manajemen_kamar.php"> <i class="bi bi-key-fill"></i>
-                        <span>Manajemen Kamar</span>
+                        <span>Kamar</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="bi bi-people-fill"></i>
-                        <span>Manajemen User</span>
+                        <span>User</span>
                     </a>
                 </li>
             <?php endif; ?>
