@@ -163,10 +163,12 @@ $inisial_user = htmlspecialchars(strtoupper(substr($nama_user, 0, 1)));
         .user-profile .user-name {
             font-weight: 600;
             color: var(--brand-dark);
+            display: block; /* <-- TAMBAHKAN INI */
         }
         .user-profile .user-role {
             font-size: 0.85rem;
             color: var(--brand-gray);
+            display: block; /* <-- TAMBAHKAN INI */
         }
         .dropdown-menu-end {
             border-radius: 8px;
