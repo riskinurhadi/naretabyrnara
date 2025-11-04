@@ -1,201 +1,152 @@
 <?php
 // sidebar_baru.php
-// Pastikan variabel $role_user sudah ada (didefinisikan di file yang memanggil)
-if (!isset($role_user)) {
-    $role_user = 'guest'; // Pengaman jika variabel tidak ada
-}
-
-// Ambil halaman saat ini
+// Menentukan halaman aktif untuk menandai link
 $current_page = basename($_SERVER['PHP_SELF']);
 
-// BARU: Cek apakah kita sedang di halaman 'Manajemen'
-// Ini akan bernilai 'true' jika halaman adalah 'manajemen_properti.php' atau 'manajemen_kamar.php'
-$is_manajemen_page = (strpos($current_page, 'manajemen_') === 0);
-?>
+// Logika untuk menu Pengaturan (agar tetap aktif di halaman anak)
+$is_pengaturan_page = (strpos($current_page, 'manajemen_') === 0);
 
+?>
 <!-- 
   ==========================================================
-  == CSS UNTUK SIDEBAR DAN LAYOUT UTAMA ==
+  == CSS KHUSUS UNTUK SIDEBAR DAN LAYOUT UTAMA ==
+  == CSS ini sekarang ada di dalam file sidebar ==
   ==========================================================
 -->
 <style>
     :root {
-        /* Warna Sidebar */
-        --sidebar-width: 260px;
-        --sidebar-dark-bg: #232a4a;
-        --sidebar-link: #adb5bd;
-        --sidebar-link-hover: #ffffff;
+        /* Ukuran */
+        --sidebar-width: 280px;
+        
+        /* Warna (Palette Baru Sesuai Gambar) */
+        --sidebar-bg: linear-gradient(180deg, #232a4a, #1a1f33);
+        --sidebar-text: rgba(255, 255, 255, 0.7);
+        --sidebar-text-active: #232a4a;
         --sidebar-active-pill: #ffffff;
-
-        /* Warna Konten (referensi) */
-        --bg-light: #f9fafb;
+        --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
     }
     
-    body {
-        overflow-x: hidden; /* Mencegah horizontal scroll */
-    }
-
-    /* * 1. WRAPPER SIDEBAR (BARU)
+    /* * 1. STYLING SIDEBAR BARU (Desktop & Mobile)
      */
-    .sidebar-nav-wrapper {
+    .sidebar-nav-wrapper.offcanvas {
         width: var(--sidebar-width);
-        min-height: 100vh;
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 1030;
-        
-        background: var(--sidebar-dark-bg);
-        background: linear-gradient(195deg, #2a335a 0%, #232a4a 100%);
-        
+        background: var(--sidebar-bg); /* <-- Menggunakan 'background' untuk gradien */
+        border-right: none; /* Hapus border, ganti shadow */
         transition: transform 0.3s ease-in-out;
     }
+    
+    .sidebar-nav-wrapper .offcanvas-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        font-weight: 600;
+        /* PERUBAHAN: Properti 'color' dihapus dari sini... */
+    }
+    
+    /* PERUBAHAN: ...dan dipindahkan ke aturan baru yang lebih spesifik di bawah ini */
+    .sidebar-nav-wrapper .offcanvas-header .offcanvas-title {
+        color: var(--sidebar-active-pill, #ffffff); /* Fallback ke #ffffff */
+    }
+    
+    .sidebar-nav {
+        padding: 1rem; /* Padding untuk keseluruhan grup menu */
+    }
 
-    /* * 2. MAIN CONTENT WRAPPER
+    .sidebar-nav .nav-item {
+        margin-bottom: 0.25rem; /* Jarak antar item menu */
+    }
+
+    .sidebar-nav .nav-link {
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--sidebar-text); /* Teks sidebar jadi terang */
+        padding: 0.8rem 1.25rem; /* Padding internal link */
+        border-radius: 0.75rem; /* Sudut lebih melengkung */
+        transition: all 0.2s ease-in-out;
+    }
+
+    .sidebar-nav .nav-link i {
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        width: 24px; /* Lebar ikon tetap */
+        text-align: center;
+        color: var(--sidebar-text); /* Ikon sidebar jadi terang */
+        transition: all 0.2s ease-in-out;
+    }
+    
+    /* Efek Hover */
+    .sidebar-nav .nav-link:hover {
+        background-color: var(--sidebar-hover-bg);
+        color: var(--bg-white, #fff);
+    }
+    .sidebar-nav .nav-link:hover i {
+        color: var(--bg-white, #fff);
+    }
+    
+    /* Status Aktif (Gaya "Pill" Putih) */
+    .sidebar-nav .nav-link.active {
+        background-color: var(--sidebar-active-pill);
+        color: var(--sidebar-text-active);
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar-nav .nav-link.active i {
+        color: var(--sidebar-text-active);
+    }
+
+    /* Tombol Logout Khusus */
+    .sidebar-nav .nav-link-logout {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--sidebar-text);
+        opacity: 0.6;
+    }
+    .sidebar-nav .nav-link-logout:hover {
+        opacity: 1;
+        background-color: rgba(220, 53, 69, 0.1); /* Hover merah */
+        color: #dc3545;
+    }
+    .sidebar-nav .nav-link-logout:hover i {
+        color: #dc3545;
+    }
+
+    /* * 2. STYLING KONTEN UTAMA (LAYOUT)
      */
     #main-content {
-        background-color: var(--bg-light);
-        min-height: 100vh;
-        padding: 1.5rem;
+        padding: 2rem; /* Padding lebih besar */
+        width: 100%;
+        margin-left: 0;
         transition: margin-left 0.3s ease-in-out;
     }
 
-    /* * 3. LOGIKA RESPONSIVE
+    /* * 3. LOGIKA RESPONSIVE (LAYOUT DESKTOP)
      */
-     
-    /* Tampilan Desktop (Sidebar terlihat) */
     @media (min-width: 992px) {
+        .sidebar-nav-wrapper.offcanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            transform: none !important;
+            visibility: visible !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Shadow pemisah */
+        }
+        
         #main-content {
             margin-left: var(--sidebar-width);
             width: calc(100% - var(--sidebar-width));
         }
     }
-
-    /* Tampilan Mobile (Sidebar tersembunyi by default) */
-    @media (max-width: 991.98px) {
-        .sidebar-nav-wrapper {
-            transform: translateX(calc(-1 * var(--sidebar-width)));
-        }
-        .sidebar-nav-wrapper.offcanvas-lg.show {
-            transform: translateX(0);
-        }
-        #main-content {
-            margin-left: 0;
-            width: 100%;
-        }
-    }
-    
-    /* * 4. STYLING MENU DI DALAM SIDEBAR
-     */
-    .sidebar-nav-wrapper .offcanvas-header {
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    /* Target h5 di dalam header sidebar (FIX Judul tidak tampil) */
-    .sidebar-nav-wrapper .offcanvas-header .offcanvas-title {
-        color: var(--sidebar-active-pill, #ffffff); /* Fallback ke #ffffff */
-        font-weight: 600;
-    }
-
-    .sidebar-nav {
-        padding: 1rem; /* Padding untuk keseluruhan grup menu */
-    }
-    .sidebar-nav-wrapper .nav-pills .nav-item {
-        margin-bottom: 0.25rem;
-    }
-    .sidebar-nav-wrapper .nav-pills .nav-link {
-        color: var(--sidebar-link);
-        font-weight: 500;
-        padding: 0.8rem 1rem;
-        border-radius: 0.375rem;
-        display: flex;
-        align-items: center;
-        transition: all 0.2s ease-in-out;
-    }
-    .sidebar-nav-wrapper .nav-pills .nav-link i {
-        margin-right: 0.75rem;
-        font-size: 1.1rem;
-        width: 24px;
-        text-align: center;
-        line-height: 1;
-        vertical-align: -2px;
-    }
-    .sidebar-nav-wrapper .nav-pills .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-        color: var(--sidebar-link-hover);
-    }
-    
-    /* Link Aktif (Pill Putih) */
-    .sidebar-nav-wrapper .nav-pills .nav-link.active {
-        background-color: var(--sidebar-active-pill, #ffffff);
-        color: var(--sidebar-dark-bg, #232a4a);
-        font-weight: 600;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    .sidebar-nav-wrapper .nav-pills .nav-link.active i {
-        color: var(--sidebar-dark-bg, #232a4a);
-    }
-    
-    /* Logout Link */
-    .sidebar-nav-wrapper .logout-link .nav-link {
-        color: var(--sidebar-link);
-    }
-    .sidebar-nav-wrapper .logout-link .nav-link:hover {
-        background-color: rgba(217, 54, 62, 0.1);
-        color: #f5c6cb;
-    }
-    
-    /* * CSS BARU UNTUK SUBMENU DROPDOWN 
-     */
-    .sidebar-nav-wrapper .nav-pills .collapse {
-        /* Latar belakang submenu box */
-        background-color: rgba(0, 0, 0, 0.15);
-        border-radius: 0.375rem;
-        margin-top: 0.25rem;
-    }
-    .sidebar-nav-wrapper .nav-pills .collapse .nav-link {
-        /* Link di dalam submenu */
-        padding-top: 0.6rem;
-        padding-bottom: 0.6rem;
-        padding-left: 2.75rem; /* Indentasi (1rem padding + 24px ikon + 0.75rem margin) */
-        font-size: 0.9rem;
-        color: var(--sidebar-link);
-    }
-    .sidebar-nav-wrapper .nav-pills .collapse .nav-link:hover {
-         /* Submenu hover */
-        background-color: transparent;
-        color: var(--sidebar-link-hover);
-    }
-    .sidebar-nav-wrapper .nav-pills .collapse .nav-link.active-submenu {
-        /* Link submenu yang aktif (hanya warna teks) */
-        color: var(--sidebar-active-pill, #ffffff);
-        font-weight: 500;
-        background-color: transparent;
-    }
-    .sidebar-nav-wrapper .nav-pills .nav-link .bi-chevron-down {
-        /* Ikon panah */
-        transition: transform 0.2s ease-in-out;
-        font-size: 0.75rem;
-    }
-    .sidebar-nav-wrapper .nav-pills .nav-link[aria-expanded="true"] .bi-chevron-down {
-        /* Rotasi panah saat dropdown terbuka */
-        transform: rotate(180deg);
-    }
-
 </style>
 
 <!-- 
   ==========================================================
-  == HTML SIDEBAR ==
+  == HTML SIDEBAR
   ==========================================================
 -->
-<div class="offcanvas offcanvas-start offcanvas-lg sidebar-nav-wrapper" 
-     data-bs-scroll="true" 
-     tabindex="-1" 
-     id="sidebarMenu" 
-     aria-labelledby="sidebarMenuLabel">
+<div class="offcanvas offcanvas-start offcanvas-lg sidebar-nav-wrapper" data-bs-scroll="true" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
     
     <!-- Header Sidebar (Logo/Nama) -->
     <div class="offcanvas-header">
@@ -204,13 +155,12 @@ $is_manajemen_page = (strpos($current_page, 'manajemen_') === 0);
     </div>
 
     <!-- Body Sidebar (Menu) -->
-    <div class="offcanvas-body p-0">
-        <!-- mt-auto membuat grup ini menempel ke bawah -->
-        <ul class="nav nav-pills flex-column sidebar-nav">
+    <div class="offcanvas-body d-flex flex-column p-0">
+        <ul class="nav flex-column sidebar-nav">
             
             <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'dashboard_baru.php') ? 'active' : ''; ?>" href="dashboard_baru.php">
-                    <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                <a class="nav-link <?php echo ($current_page == 'dashboard_baru.php' || $current_page == 'dashboard.php' || $current_page == '') ? 'active' : ''; ?>" href="dashboard_baru.php">
+                    <i class="bi bi-grid"></i> Dashboard
                 </a>
             </li>
             
@@ -218,42 +168,36 @@ $is_manajemen_page = (strpos($current_page, 'manajemen_') === 0);
             
             <?php if (in_array($role_user, ['admin', 'front_office'])): ?>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'reservasi_kalender.php') ? 'active' : ''; ?>" href="#"> <!-- Nanti ganti href -->
-                        <i class="bi bi-calendar-check-fill"></i> Reservasi
+                    <a class="nav-link <?php echo ($current_page == 'reservasi_kalender.php') ? 'active' : ''; ?>" href="reservasi_kalender.php"> 
+                        <i class="bi bi-calendar-check"></i> Reservasi
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'tamu_data.php') ? 'active' : ''; ?>" href="#"> <!-- Nanti ganti href -->
-                        <i class="bi bi-people-fill"></i> Data Tamu
+                    <a class="nav-link <?php echo ($current_page == 'tamu_data.php') ? 'active' : ''; ?>" href="tamu_data.php"> 
+                        <i class="bi bi-people"></i> Data Tamu
                     </a>
                 </li>
             <?php endif; ?>
 
             <?php if (in_array($role_user, ['admin', 'housekeeping'])): ?>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'kamar_status.php') ? 'active' : ''; ?>" href="#"> <!-- Nanti ganti href -->
-                        <i class="bi bi-house-door-fill"></i> Status Kamar
+                    <a class="nav-link <?php echo ($current_page == 'kamar_status.php') ? 'active' : ''; ?>" href="kamar_status.php"> 
+                        <i class="bi bi-house-check"></i> Status Kamar
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'maintenance_laporan.php') ? 'active' : ''; ?>" href="#"> <!-- Nanti ganti href -->
-                        <i class="bi bi-wrench"></i> Maintenance
+                    <a class="nav-link <?php echo ($current_page == 'maintenance_laporan.php') ? 'active' : ''; ?>" href="maintenance_laporan.php"> 
+                        <i class="bi bi-wrench-adjustable"></i> Maintenance
                     </a>
                 </li>
             <?php endif; ?>
 
             <?php if ($role_user == 'admin'): ?>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'laporan_keuangan.php') ? 'active' : ''; ?>" href="#"> <!-- Nanti ganti href -->
+                    <a class="nav-link <?php echo ($current_page == 'laporan_keuangan.php') ? 'active' : ''; ?>" href="laporan_keuangan.php"> 
                         <i class="bi bi-journal-text"></i> Laporan
                     </a>
                 </li>
-                
-                <!-- 
-                  ==========================================================
-                  == PERUBAHAN: MENU DROPDOWN MANAJEMEN ==
-                  ==========================================================
-                -->
                 <li class="nav-item">
                     <!-- 
                         PERUBAHAN: 
@@ -286,7 +230,7 @@ $is_manajemen_page = (strpos($current_page, 'manajemen_') === 0);
                                     1. Link submenu menggunakan class 'active-submenu'.
                                     2. href diatur ke halaman spesifik.
                                 -->
-                                <a class="nav-link <?php echo ($current_page == 'manajemen_properti.php') ? 'active-submenu' : ''; ?>" href="manajemen_properti.php">
+                                <a class="nav-link bi-gear-wide-connected<?php echo ($current_page == 'manajemen_properti.php') ? 'active-submenu' : ''; ?>" href="manajemen_properti.php">
                                     Properti
                                 </a>
                             </li>
@@ -299,24 +243,19 @@ $is_manajemen_page = (strpos($current_page, 'manajemen_') === 0);
                         </ul>
                     </div>
                 </li>
-                <!-- ========================================================== -->
-
             <?php endif; ?>
         </ul>
-        
-        <!-- Menu Logout (Selalu di Bawah) -->
-        <ul class="nav nav-pills flex-column sidebar-nav mt-auto logout-link">
-             <li class="nav-item">
-                <!-- 
-                  ==========================================================
-                  == PERBAIKAN: Memperbaiki 'class.nav-link"' menjadi 'class="nav-link"' ==
-                  ==========================================================
-                -->
-                <a class="nav-link" href="logout.php">
+
+        <!-- Tombol Logout di Bawah (mt-auto) -->
+        <ul class="nav flex-column sidebar-nav mt-auto">
+            <li class_nav-item">
+                <a class="nav-link nav-link-logout" href="logout.php">
                     <i class="bi bi-box-arrow-left"></i> Logout
                 </a>
             </li>
         </ul>
     </div>
 </div>
+
+
 
