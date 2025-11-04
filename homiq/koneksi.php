@@ -1,18 +1,25 @@
 <?php
 // koneksi.php
+// Konfigurasi koneksi database untuk CMS Guesthouse Adiputra
 
-$host = 'localhost';
-$user = 'adiputra'; // Ganti dengan username database Anda
-$pass = 'Aloevera21.'; // Ganti dengan password database Anda
-$db   = 'adiputra'; // Ganti dengan nama database Anda
+// Konfigurasi Database
+define('DB_HOST', 'localhost');
+define('DB_USER', 'adiputra');
+define('DB_PASS', 'Aloevera21.');
+define('DB_NAME', 'adiputra');
 
-$koneksi = new mysqli($host, $user, $pass, $db);
+// Membuat koneksi
+$koneksi = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
 // Cek koneksi
 if ($koneksi->connect_error) {
-    die("Koneksi Gagal: " . $koneksi->connect_error);
+    die("Koneksi database gagal: " . $koneksi->connect_error);
 }
 
-// Mengatur zona waktu default
+// Set charset ke utf8mb4 untuk support emoji dan karakter khusus
+$koneksi->set_charset("utf8mb4");
+
+// Set timezone ke Asia/Jakarta
 date_default_timezone_set('Asia/Jakarta');
+
 ?>

@@ -1,18 +1,21 @@
 <?php
 // auth_check.php
+// File untuk mengecek apakah user sudah login
+// Include file ini di setiap halaman yang memerlukan autentikasi
+
 session_start();
 
-// Cek apakah user sudah login atau belum
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    // Jika belum, redirect ke halaman login
+// Cek apakah user sudah login
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
+    // Jika belum login, redirect ke halaman login
     header("Location: login.php");
-    exit;
+    exit();
 }
 
-// Opsional: Anda bisa menambahkan cek role di sini
-/*
-if ($_SESSION['role'] !== 'admin') {
-    die("Anda tidak memiliki akses ke halaman ini.");
-}
-*/
+// Simpan data user dari session untuk digunakan di halaman
+$user_id = $_SESSION['user_id'];
+$username = $_SESSION['username'];
+$nama_lengkap = $_SESSION['nama_lengkap'] ?? 'User';
+$role_user = $_SESSION['role'] ?? 'guest';
+
 ?>
