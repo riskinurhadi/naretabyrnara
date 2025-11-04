@@ -39,7 +39,9 @@ $is_pengaturan_page = (strpos($current_page, 'manajemen_') === 0);
         padding: 1.25rem 1.5rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         font-weight: 600;
-        color: var(--bg-white, #fff); /* Fallback ke putih */
+        /* PERUBAHAN: Mengganti var(--bg-white) yang tidak ada 
+           dengan var(--sidebar-active-pill) yang sudah ada (#ffffff) */
+        color: var(--sidebar-active-pill); 
     }
     
     .sidebar-nav {
@@ -144,7 +146,7 @@ $is_pengaturan_page = (strpos($current_page, 'manajemen_') === 0);
 <div class="offcanvas offcanvas-start offcanvas-lg sidebar-nav-wrapper" data-bs-scroll="true" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
     
     <!-- Header Sidebar (Logo/Nama) -->
-    <div class="offcanvas-header mt-5">
+    <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="sidebarMenuLabel">Guesthouse Adiputra</h5>
         <button type="button" class="btn-close btn-close-white d-lg-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
@@ -213,4 +215,5 @@ $is_pengaturan_page = (strpos($current_page, 'manajemen_') === 0);
         </ul>
     </div>
 </div>
+
 
