@@ -6,7 +6,7 @@ require_once 'koneksi.php';
 $nama_user = htmlspecialchars($_SESSION['nama_lengkap']);
 $role_user = htmlspecialchars($_SESSION['role']); // Variabel ini DIBUTUHKAN oleh sidebar.php
 
-// MENGAMBIL DATA STATISTIK
+// MENGAMBIL DATA STATISTIK DARI DATABASE
 $stmt_res_aktif = $koneksi->query("SELECT COUNT(*) as total FROM tbl_reservasi WHERE status_booking IN ('Booking', 'Checked-in')");
 $stat_res_aktif = $stmt_res_aktif->fetch_assoc()['total'];
 $stmt_kamar = $koneksi->query("SELECT COUNT(*) as total FROM tbl_kamar WHERE status = 'Tersedia'");
@@ -38,9 +38,6 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     
     <style>
-        /* * CSS INTERNAL BARU UNTUK LAYOUT RESPONSIF
-         * INI PENTING UNTUK DIPERBARUI
-        */
         :root {
             --sidebar-width: 260px;
             --bg-light: #f4f7f6;
@@ -61,10 +58,14 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             min-height: 100vh;
         }
 
-        /* * STYLING SIDEBAR (DI ATAS 992px / 'lg') 
-         * Ini "memaksa" offcanvas untuk jadi sidebar fixed di desktop
+        /* * ==========================================================
+         * == INI ADALAH CSS PENTING UNTUK LAYOUT DESKTOP ==
+         * ==========================================================
+         * Di layar 992px (desktop) ke atas...
         */
         @media (min-width: 992px) {
+            
+            /* 1. Paksa sidebar (yang aslinya offcanvas) untuk jadi 'fixed' */
             .offcanvas-lg {
                 position: fixed;
                 top: 0;
@@ -74,20 +75,17 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
                 min-height: 100vh;
                 transform: none !important;
                 visibility: visible !important;
-                /* Beri shadow seperti desain awal */
                 box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
             }
 
-            /* Ini adalah bagian PENTING yang memperbaiki layout Anda */
+            /* 2. Beri 'margin-left' ke konten utama seukuran sidebar */
             #main-content {
                 margin-left: var(--sidebar-width);
                 width: calc(100% - var(--sidebar-width));
             }
-            /* Push body to give a stable left column and avoid overlay issues */
-            body { margin-left: var(--sidebar-width); }
         }
 
-        /* Di bawah 992px (mobile), main-content akan full-width */
+        /* Di bawah 992px (mobile), konten utama akan otomatis 100% width */
         #main-content {
             padding: 1.5rem;
             width: 100%;
@@ -110,7 +108,7 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
         .sidebar-nav .nav-link.active { background-color: var(--active-bg); color: var(--active-color); }
         .sidebar-nav .nav-link.active i { color: var(--active-color); }
 
-        /* Styling Header & Konten */
+        /* Styling Header & Konten (Card) */
         .main-header {
             background-color: var(--bg-white);
             padding: 1rem 1.5rem;
@@ -118,9 +116,6 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             margin-bottom: 1.5rem;
         }
-        /* Ensure layer ordering so sidebar doesn't visually overlap content on some setups */
-        .offcanvas-lg { z-index: 1020; }
-        #main-content { position: relative; z-index: 1; }
         .user-profile .dropdown-toggle::after { display: none; }
         .user-profile img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .stat-card {
@@ -265,7 +260,7 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
                         <h5><i class="bi bi-clipboard2-check me-2"></i> Aktivitas Housekeeping</h5>
                         <a href="#" class="btn btn-link">Lihat Laporan</a>
                     </div>
-                    <div class="text-center text-muted p-4">
+                    <div classs="text-center text-muted p-4">
                         <p>Tidak ada laporan maintenance baru.</p>
                         <a href="#" class="btn btn-sm btn-outline-primary">Buat Laporan Baru</a>
                     </div>
@@ -273,12 +268,9 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             </div>
         </div>
 
-    </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-        // JS Internal untuk link sidebar aktif
+    </div> </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
             const currentLocation = window.location.pathname.split('/').pop();
             const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
@@ -290,6 +282,7 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
                 }
             });
 
+            // Penanganan khusus untuk dashboard.php
             if (currentLocation === 'dashboard.php' || currentLocation === '') {
                  const dashLink = document.querySelector('.sidebar-nav .nav-link[href="dashboard.php"]');
                  if (dashLink) dashLink.classList.add('active');

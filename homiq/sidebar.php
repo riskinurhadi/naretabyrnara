@@ -1,5 +1,6 @@
 <?php
 // sidebar.php
+// Pastikan variabel $role_user sudah ada (didefinisikan di file yang memanggil)
 if (!isset($role_user)) {
     $role_user = 'guest'; // Pengaman jika variabel tidak ada
 }
@@ -20,41 +21,37 @@ if (!isset($role_user)) {
                 </a>
             </li>
             
+            <?php // Tampilkan menu berdasarkan ROLE ?>
+            
             <?php if (in_array($role_user, ['admin', 'front_office'])): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="reservasi_kalender.php">
-                        <i class="bi bi-calendar-check"></i> Reservasi
+                    <a class="nav-link" href="reservasi_kalender.php"> <i class="bi bi-calendar-check"></i> Reservasi
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="tamu_data.php">
-                        <i class="bi bi-people"></i> Data Tamu
+                    <a class="nav-link" href="tamu_data.php"> <i class="bi bi-people"></i> Data Tamu
                     </a>
                 </li>
             <?php endif; ?>
 
             <?php if (in_array($role_user, ['admin', 'housekeeping'])): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="kamar_status.php">
-                        <i class="bi bi-house-check"></i> Status Kamar
+                    <a class="nav-link" href="kamar_status.php"> <i class="bi bi-house-check"></i> Status Kamar
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="maintenance_laporan.php">
-                        <i class="bi bi-wrench-adjustable"></i> Maintenance
+                    <a class="nav-link" href="maintenance_laporan.php"> <i class="bi bi-wrench-adjustable"></i> Maintenance
                     </a>
                 </li>
             <?php endif; ?>
 
             <?php if ($role_user == 'admin'): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="laporan_keuangan.php">
-                        <i class="bi bi-journal-text"></i> Laporan
+                    <a class="nav-link" href="laporan_keuangan.php"> <i class="bi bi-journal-text"></i> Laporan
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="pengaturan_properti.php">
-                        <i class="bi bi-gear"></i> Pengaturan
+                    <a class="nav-link" href="pengaturan_properti.php"> <i class="bi bi-gear"></i> Pengaturan
                     </a>
                 </li>
             <?php endif; ?>
