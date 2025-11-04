@@ -732,71 +732,7 @@ $koneksi->close();
 <body>
     <div class="d-flex">
         <!-- SIDEBAR -->
-        <div class="offcanvas offcanvas-start offcanvas-lg sidebar-modern" data-bs-scroll="true" tabindex="-1" id="sidebarMenu">
-            <div class="offcanvas-body">
-                <ul class="nav flex-column sidebar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="dashboard.php">
-                            <i class="bi bi-grid-3x3-gap"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <?php if (in_array($role_user, ['admin', 'front_office'])): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-calendar-check"></i>
-                                <span>Reservasi</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-people"></i>
-                                <span>Data Tamu</span>
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                    <?php if (in_array($role_user, ['admin', 'housekeeping'])): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-house-check"></i>
-                                <span>Status Kamar</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-wrench-adjustable"></i>
-                                <span>Maintenance</span>
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                    <?php if ($role_user == 'admin'): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-journal-text"></i>
-                                <span>Laporan</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-gear-wide-connected"></i>
-                                <span>Pengaturan</span>
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-
-                <div class="sidebar-logout">
-                    <ul class="nav flex-column sidebar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-logout" href="logout.php">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Keluar</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        <?php include 'sidebar.php'; ?>
 
         <!-- MAIN CONTENT -->
         <div id="main-content" style="flex: 1; width: 100%;">
