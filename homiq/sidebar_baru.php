@@ -144,7 +144,7 @@ $is_pengaturan_page = (strpos($current_page, 'manajemen_') === 0);
 <div class="offcanvas offcanvas-start offcanvas-lg sidebar-nav-wrapper" data-bs-scroll="true" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
     
     <!-- Header Sidebar (Logo/Nama) -->
-    <div class="offcanvas-header">
+    <div class="offcanvas-header mt-5">
         <h5 class="offcanvas-title" id="sidebarMenuLabel">Guesthouse Adiputra</h5>
         <button type="button" class="btn-close btn-close-white d-lg-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
