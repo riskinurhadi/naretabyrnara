@@ -148,6 +148,9 @@ $result_properti = $koneksi->query($query_properti);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             margin-bottom: 1.5rem;
         }
+        /* Ensure layer ordering so sidebar doesn't visually overlap content on some setups */
+        .offcanvas-lg { z-index: 1020; }
+        #main-content { position: relative; z-index: 1; }
         .user-profile .dropdown-toggle::after { display: none; }
         .user-profile img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .content-card {
@@ -353,8 +356,8 @@ $result_properti = $koneksi->query($query_properti);
                     <p>Apakah Anda yakin ingin menghapus properti ini?</p>
                     <h5 class="text-danger" id="hapus_nama_properti"></h5>
                     <div class="alert alert-warning mt-3">
-                        <strong>Peringatan!</strong> Menghapus properti ini juga akan 
-                        menghapus **semua data kamar** yang terkait dengannya. 
+                        <strong>Peringatan!</strong> Menghapus properti ini juga akan
+                        menghapus semua data kamar yang terkait dengannya.
                         Tindakan ini tidak dapat dibatalkan.
                     </div>
                 </div>

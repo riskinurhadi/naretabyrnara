@@ -260,7 +260,7 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
                         <h5><i class="bi bi-clipboard2-check me-2"></i> Aktivitas Housekeeping</h5>
                         <a href="#" class="btn btn-link">Lihat Laporan</a>
                     </div>
-                    <div classs="text-center text-muted p-4">
+                    <div class="text-center text-muted p-4">
                         <p>Tidak ada laporan maintenance baru.</p>
                         <a href="#" class="btn btn-sm btn-outline-primary">Buat Laporan Baru</a>
                     </div>
@@ -268,8 +268,11 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             </div>
         </div>
 
-    </div> </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
         // JS Internal untuk link sidebar aktif
         document.addEventListener("DOMContentLoaded", function() {
             const currentLocation = window.location.pathname.split('/').pop();
