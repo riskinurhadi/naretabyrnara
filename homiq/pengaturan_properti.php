@@ -6,15 +6,22 @@ require_once 'koneksi.php';
 $nama_user = htmlspecialchars($_SESSION['nama_lengkap']);
 $role_user = htmlspecialchars($_SESSION['role']); // Dibutuhkan oleh sidebar.php
 
+// -----------------------------------------------------------------
+// 🔒 OTORISASI: Halaman ini HANYA untuk ADMIN
+// -----------------------------------------------------------------
 if ($role_user !== 'admin') {
     header("Location: dashboard.php");
     exit;
 }
 
-// Logika CRUD (Tidak berubah)
+// -----------------------------------------------------------------
+// LOGIKA CRUD (CREATE, UPDATE, DELETE)
+// -----------------------------------------------------------------
 $success_message = '';
 $error_message = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
+    
+    // ACTION: TAMBAH
     if ($_POST['action'] == 'tambah') {
         $nama_properti = $koneksi->real_escape_string($_POST['nama_properti']);
         $alamat = $koneksi->real_escape_string($_POST['alamat']);
@@ -26,6 +33,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             $stmt->close();
         } else { $error_message = "Nama properti tidak boleh kosong."; }
     }
+    
+    // ACTION: EDIT
     elseif ($_POST['action'] == 'edit') {
         $id_properti = intval($_POST['id_properti']);
         $nama_properti = $koneksi->real_escape_string($_POST['nama_properti']);
@@ -38,6 +47,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             $stmt->close();
         } else { $error_message = "Data tidak valid untuk proses edit."; }
     }
+    
+    // ACTION: HAPUS
     elseif ($_POST['action'] == 'hapus') {
         $id_properti = intval($_POST['id_properti']);
         if ($id_properti > 0) {
@@ -49,6 +60,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
         } else { $error_message = "ID Properti tidak valid."; }
     }
 }
+
+// -----------------------------------------------------------------
+// MENGAMBIL DATA (READ)
+// -----------------------------------------------------------------
 $query_properti = "SELECT * FROM tbl_properti ORDER BY nama_properti ASC";
 $result_properti = $koneksi->query($query_properti);
 
@@ -63,7 +78,9 @@ $result_properti = $koneksi->query($query_properti);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     
     <style>
-        /* CSS INTERNAL BARU (SAMA DENGAN DASHBOARD.PHP) */
+        /* * CSS INTERNAL BARU (SAMA DENGAN DASHBOARD.PHP)
+         * Ini penting untuk layout responsif
+        */
         :root {
             --sidebar-width: 260px;
             --bg-light: #f4f7f6;
@@ -80,6 +97,7 @@ $result_properti = $koneksi->query($query_properti);
         }
         .wrapper { min-height: 100vh; }
 
+        /* Styling Sidebar Desktop (di atas 992px) */
         @media (min-width: 992px) {
             .offcanvas-lg {
                 position: fixed;
@@ -92,18 +110,21 @@ $result_properti = $koneksi->query($query_properti);
                 visibility: visible !important;
                 box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
             }
+            /* Margin kiri untuk konten utama di desktop */
             #main-content {
                 margin-left: var(--sidebar-width);
                 width: calc(100% - var(--sidebar-width));
             }
         }
 
+        /* Konten utama di mobile */
         #main-content {
             padding: 1.5rem;
             width: 100%;
             margin-left: 0;
         }
 
+        /* Styling menu sidebar */
         .sidebar-nav .nav-item { margin-bottom: 0.25rem; }
         .sidebar-nav .nav-link {
             display: flex;
@@ -119,6 +140,7 @@ $result_properti = $koneksi->query($query_properti);
         .sidebar-nav .nav-link.active { background-color: var(--active-bg); color: var(--active-color); }
         .sidebar-nav .nav-link.active i { color: var(--active-color); }
 
+        /* Styling Header & Card */
         .main-header {
             background-color: var(--bg-white);
             padding: 1rem 1.5rem;
@@ -230,7 +252,7 @@ $result_properti = $koneksi->query($query_properti);
                                             <td><?php echo htmlspecialchars($row['nama_properti']); ?></td>
                                             <td><?php echo htmlspecialchars($row['alamat']); ?></td>
                                             <td class="text-center">
-                                                <button typeA="button" class="btn btn-warning btn-sm btn-edit" 
+                                                <button type="button" class="btn btn-warning btn-sm btn-edit" 
                                                         title="Edit Properti"
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#editModal"
@@ -251,7 +273,7 @@ $result_properti = $koneksi->query($query_properti);
                                         </tr>
                                     <?php endwhile; ?>
                                 <?php else: ?>
-                                    <tr><td colspan="4" class="text-center text-muted">Belum ada data properti.</td></tr>
+                                    <tr><td colspan="4" class="text-center text-muted">Belum ada data properti. Silakan tambahkan properti baru.</td></tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
@@ -348,6 +370,7 @@ $result_properti = $koneksi->query($query_properti);
     
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            
             // Modal Edit
             const editModal = document.getElementById('editModal');
             if (editModal) {
@@ -374,19 +397,33 @@ $result_properti = $koneksi->query($query_properti);
                 });
             }
 
-            // Sidebar Active Link
+            // Sidebar Active Link (Diperbarui)
             const currentLocation = window.location.pathname.split('/').pop();
             const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+            
+            let isPengaturanPage = false;
+
             navLinks.forEach(link => {
                 link.classList.remove('active');
-                if (link.getAttribute('href') === currentLocation) {
+                const linkHref = link.getAttribute('href');
+                
+                if (linkHref === currentLocation) {
                     link.classList.add('active');
                 }
+                
+                // Cek apakah ini halaman pengaturan
+                if (linkHref === 'pengaturan_properti.php' && currentLocation.startsWith('pengaturan_')) {
+                    isPengaturanPage = true;
+                }
             });
-            // Link Pengaturan mungkin perlu penanganan khusus
-            if (currentLocation === 'pengaturan_properti.php' || currentLocation === 'pengaturan_kamar.php') {
+
+            // Jika kita di halaman 'pengaturan_properti.php' atau 'pengaturan_kamar.php', 
+            // pastikan link 'Pengaturan' yang aktif
+            if (isPengaturanPage || currentLocation.startsWith('pengaturan_')) {
                  const settingsLink = document.querySelector('.sidebar-nav .nav-link[href="pengaturan_properti.php"]');
-                 if (settingsLink) settingsLink.classList.add('active');
+                 if (settingsLink) {
+                    settingsLink.classList.add('active');
+                 }
             }
         });
     </script>

@@ -1,6 +1,5 @@
 <?php
 // sidebar.php
-// Pastikan variabel $role_user sudah ada (didefinisikan di file yang memanggil)
 if (!isset($role_user)) {
     $role_user = 'guest'; // Pengaman jika variabel tidak ada
 }

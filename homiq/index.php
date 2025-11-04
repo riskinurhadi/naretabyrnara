@@ -6,7 +6,7 @@ require_once 'koneksi.php';
 $nama_user = htmlspecialchars($_SESSION['nama_lengkap']);
 $role_user = htmlspecialchars($_SESSION['role']); // Variabel ini DIBUTUHKAN oleh sidebar.php
 
-// MENGAMBIL DATA STATISTIK (Tidak berubah)
+// MENGAMBIL DATA STATISTIK
 $stmt_res_aktif = $koneksi->query("SELECT COUNT(*) as total FROM tbl_reservasi WHERE status_booking IN ('Booking', 'Checked-in')");
 $stat_res_aktif = $stmt_res_aktif->fetch_assoc()['total'];
 $stmt_kamar = $koneksi->query("SELECT COUNT(*) as total FROM tbl_kamar WHERE status = 'Tersedia'");
@@ -38,7 +38,9 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     
     <style>
-        /* CSS INTERNAL BARU UNTUK LAYOUT RESPONSIF */
+        /* * CSS INTERNAL BARU UNTUK LAYOUT RESPONSIF
+         * INI PENTING UNTUK DIPERBARUI
+        */
         :root {
             --sidebar-width: 260px;
             --bg-light: #f4f7f6;
@@ -56,13 +58,11 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
         }
 
         .wrapper {
-            /* Flex layout tidak diperlukan lagi di sini */
             min-height: 100vh;
         }
 
         /* * STYLING SIDEBAR (DI ATAS 992px / 'lg') 
-         * Menggunakan @media query, kita "memaksa" offcanvas 
-         * untuk bertindak sebagai sidebar fixed di desktop.
+         * Ini "memaksa" offcanvas untuk jadi sidebar fixed di desktop
         */
         @media (min-width: 992px) {
             .offcanvas-lg {
@@ -72,21 +72,20 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
                 bottom: 0;
                 width: var(--sidebar-width);
                 min-height: 100vh;
-                /* Membatalkan perilaku offcanvas */
                 transform: none !important;
                 visibility: visible !important;
                 /* Beri shadow seperti desain awal */
                 box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
             }
 
+            /* Ini adalah bagian PENTING yang memperbaiki layout Anda */
             #main-content {
-                /* Beri margin kiri seukuran sidebar di desktop */
                 margin-left: var(--sidebar-width);
                 width: calc(100% - var(--sidebar-width));
             }
         }
 
-        /* Di bawah 992px, #main-content akan otomatis full-width */
+        /* Di bawah 992px (mobile), main-content akan full-width */
         #main-content {
             padding: 1.5rem;
             width: 100%;
@@ -109,7 +108,7 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
         .sidebar-nav .nav-link.active { background-color: var(--active-bg); color: var(--active-color); }
         .sidebar-nav .nav-link.active i { color: var(--active-color); }
 
-        /* Styling Header & Konten (Tidak banyak berubah) */
+        /* Styling Header & Konten */
         .main-header {
             background-color: var(--bg-white);
             padding: 1rem 1.5rem;
@@ -124,7 +123,6 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             border-radius: 0.75rem;
             padding: 1.5rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s ease-in-out;
             border: none;
             height: 100%;
         }
@@ -144,7 +142,6 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
     
     <?php 
         // Memanggil sidebar terpusat
-        // Variabel $role_user otomatis ter-scope dari atas
         require_once 'sidebar.php'; 
     ?>
 
@@ -279,15 +276,15 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
 
             navLinks.forEach(link => {
+                link.classList.remove('active'); // Hapus 'active' dari semua
                 if (link.getAttribute('href') === currentLocation) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
+                    link.classList.add('active'); // Tambah 'active' ke link yg cocok
                 }
             });
 
             if (currentLocation === 'dashboard.php' || currentLocation === '') {
-                 document.querySelector('.sidebar-nav .nav-link[href="dashboard.php"]').classList.add('active');
+                 const dashLink = document.querySelector('.sidebar-nav .nav-link[href="dashboard.php"]');
+                 if (dashLink) dashLink.classList.add('active');
             }
         });
     </script>
