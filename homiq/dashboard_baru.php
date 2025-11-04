@@ -42,7 +42,7 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
     
     <!-- 
       ==========================================================
-      == CSS INTERNAL BARU UNTUK LAYOUT MODERN ==
+      == CSS INTERNAL BARU (GAYA DARI GAMBAR) ==
       ==========================================================
     -->
     <style>
@@ -50,17 +50,25 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             /* Ukuran */
             --sidebar-width: 280px;
             
-            /* Warna (Palette Biru Profesional) */
-            --primary-color: #0d6efd; /* Biru Bootstrap */
-            --primary-color-dark: #0a58ca;
-            --primary-bg-light: #f0f6ff; /* Latar belakang hover */
+            /* Warna (Palette Baru Sesuai Gambar) */
+            --sidebar-bg: #232a4a; /* Biru tua solid untuk sidebar */
+            --sidebar-text: rgba(255, 255, 255, 0.7);
+            --sidebar-text-active: #232a4a;
+            --sidebar-active-pill: #ffffff;
+            --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
             
-            /* Warna Netral */
-            --bg-light: #f8f9fa;      /* Latar belakang body */
-            --bg-white: #ffffff;      /* Latar belakang card/sidebar */
+            /* Warna Konten */
+            --bg-light: #f9fafb;      /* Latar belakang body lebih cerah */
+            --bg-white: #ffffff;      /* Latar belakang card */
             --text-dark: #212529;     /* Teks utama */
             --text-muted: #6c757d;    /* Teks abu-abu */
-            --border-color: #dee2e6;  /* Garis batas */
+            --border-color: #f0f0f0;  /* Garis batas sangat tipis */
+            
+            /* Warna Ikon Statistik */
+            --color-blue: #0d6efd;      --bg-blue-light: #e7f0ff;
+            --color-green: #198754;     --bg-green-light: #e8f9ee;
+            --color-orange: #fd7e14;    --bg-orange-light: #fff3e8;
+            --color-purple: #6f42c1;    --bg-purple-light: #f3effc;
         }
 
         body {
@@ -74,21 +82,16 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
          */
         .sidebar-nav-wrapper {
             width: var(--sidebar-width);
-            background-color: var(--bg-white);
-            border-right: 1px solid var(--border-color);
-            /* Transisi untuk buka/tutup di mobile */
+            background-color: var(--sidebar-bg);
+            border-right: none; /* Hapus border, ganti shadow */
             transition: transform 0.3s ease-in-out;
         }
         
         .sidebar-nav-wrapper .offcanvas-header {
             padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .sidebar-nav-wrapper .offcanvas-body {
-            /* padding: 0 !important; */
+            color: var(--bg-white); /* Teks header jadi putih */
         }
         
         .sidebar-nav {
@@ -104,9 +107,9 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             align-items: center;
             font-size: 0.95rem;
             font-weight: 500;
-            color: var(--text-dark);
-            padding: 0.8rem 1rem; /* Padding internal link */
-            border-radius: 0.5rem; /* Sudut melengkung */
+            color: var(--sidebar-text); /* Teks sidebar jadi terang */
+            padding: 0.8rem 1.25rem; /* Padding internal link */
+            border-radius: 0.75rem; /* Sudut lebih melengkung */
             transition: all 0.2s ease-in-out;
         }
 
@@ -115,40 +118,42 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             margin-right: 1rem;
             width: 24px; /* Lebar ikon tetap */
             text-align: center;
-            color: var(--text-muted);
+            color: var(--sidebar-text); /* Ikon sidebar jadi terang */
             transition: all 0.2s ease-in-out;
         }
         
         /* Efek Hover */
         .sidebar-nav .nav-link:hover {
-            background-color: var(--primary-bg-light);
-            color: var(--primary-color);
+            background-color: var(--sidebar-hover-bg);
+            color: var(--bg-white);
         }
         .sidebar-nav .nav-link:hover i {
-            color: var(--primary-color);
+            color: var(--bg-white);
         }
         
-        /* Status Aktif */
+        /* Status Aktif (Gaya "Pill" Putih) */
         .sidebar-nav .nav-link.active {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--sidebar-active-pill);
+            color: var(--sidebar-text-active);
             font-weight: 600;
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         .sidebar-nav .nav-link.active i {
-            color: white;
+            color: var(--sidebar-text-active);
         }
 
         /* Tombol Logout Khusus */
         .sidebar-nav .nav-link-logout {
             margin-top: 1rem;
             padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--sidebar-text);
+            opacity: 0.6;
         }
         .sidebar-nav .nav-link-logout:hover {
-            background-color: #fff8f8;
-            color: #dc3545; /* Merah */
+            opacity: 1;
+            background-color: rgba(220, 53, 69, 0.1); /* Hover merah */
+            color: #dc3545;
         }
         .sidebar-nav .nav-link-logout:hover i {
             color: #dc3545;
@@ -158,7 +163,7 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
         /* * 2. STYLING KONTEN UTAMA
          */
         #main-content {
-            padding: 1.5rem;
+            padding: 2rem; /* Padding lebih besar */
             width: 100%;
             margin-left: 0;
             transition: margin-left 0.3s ease-in-out;
@@ -167,9 +172,6 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
         /* * 3. LOGIKA RESPONSIVE (LAYOUT DESKTOP)
          */
         @media (min-width: 992px) {
-            /* * Di layar 992px (desktop) ke atas...
-             * Paksa sidebar (yang aslinya offcanvas) untuk jadi 'fixed'.
-             */
             .sidebar-nav-wrapper {
                 position: fixed;
                 top: 0;
@@ -177,61 +179,76 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
                 bottom: 0;
                 transform: none !important;
                 visibility: visible !important;
-                /* Beri sedikit shadow untuk efek 'depth' */
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.03);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Shadow pemisah */
             }
             
-            /* * Beri 'margin-left' ke konten utama seukuran sidebar
-             * Ini adalah perbaikan utama dari masalah Anda sebelumnya.
-             */
             #main-content {
                 margin-left: var(--sidebar-width);
                 width: calc(100% - var(--sidebar-width));
             }
         }
 
-        /* * 4. STYLING KONTEN (CARD, HEADER, DLL) - Diambil dari CSS Anda
+        /* * 4. STYLING KONTEN (CARD, HEADER, DLL)
          */
         .main-header {
             background-color: var(--bg-white);
             padding: 1rem 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            margin-bottom: 1.5rem;
+            border-radius: 1rem; /* Lebih bulat */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            margin-bottom: 2rem; /* Jarak lebih besar */
+            border: 1px solid var(--border-color);
         }
         .user-profile .dropdown-toggle::after { display: none; }
         .user-profile img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         
+        /* GAYA STAT CARD BARU */
         .stat-card {
             background-color: var(--bg-white);
-            border-radius: 0.75rem;
+            border-radius: 1rem; /* Sangat bulat */
             padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: none;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
             height: 100%;
             transition: all 0.2s ease-in-out;
         }
         .stat-card:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07); 
+            transform: translateY(-4px); 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07); 
         }
-        .stat-icon { 
-            width: 50px; height: 50px; border-radius: 50%; display: flex; 
-            align-items: center; justify-content: center; 
-            font-size: 1.5rem; color: #fff; flex-shrink: 0; 
+        
+        /* GAYA IKON STAT BARU (Lingkaran Berwarna) */
+        .stat-icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem; /* Ikon lebih besar */
+            flex-shrink: 0;
         }
+        /* Varian Warna Ikon */
+        .stat-icon-circle.blue { background-color: var(--bg-blue-light); color: var(--color-blue); }
+        .stat-icon-circle.green { background-color: var(--bg-green-light); color: var(--color-green); }
+        .stat-icon-circle.orange { background-color: var(--bg-orange-light); color: var(--color-orange); }
+        .stat-icon-circle.purple { background-color: var(--bg-purple-light); color: var(--color-purple); }
+        
         .stat-card h3 { font-size: 2rem; font-weight: 700; margin: 0; }
         .stat-card p { font-size: 0.9rem; color: var(--text-muted); margin: 0; }
         
+        /* GAYA CONTENT CARD BAWAH */
         .content-card { 
-            background-color: var(--bg-white); border-radius: 0.75rem; 
-            padding: 1.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
-            border: none; height: 100%; 
+            background-color: var(--bg-white);
+            border-radius: 1rem; /* Sangat bulat */
+            padding: 1.5rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            height: 100%; 
         }
         .content-card-header { 
             display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 1rem; padding-bottom: 1rem; 
-            border-bottom: 1px solid #eee; 
+            margin-bottom: 1.25rem; padding-bottom: 1.25rem; 
+            border-bottom: 1px solid var(--border-color); 
         }
         .content-card-header h5 { margin: 0; font-weight: 600; }
         .content-card-header .btn-link { text-decoration: none; font-size: 0.9rem; }
@@ -239,10 +256,6 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
 </head>
 <body>
 
-<!-- 
-  Struktur wrapper ini penting untuk menjaga footer
-  (jika ada) tetap di bawah pada halaman pendek.
--->
 <div class="d-flex flex-row min-vh-100">
     
     <?php 
@@ -281,19 +294,19 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
                         <li><a class="dropdown-item" href="#">Profil Saya</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <!-- Link Logout di header saya hapus karena sudah pindah ke sidebar -->
                         <li><a class="dropdown-item text-muted" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i> Logout (dari Sidebar)</a></li>
                     </ul>
                 </div>
             </div>
         </header>
 
-        <!-- Konten Statistik (SAMA SEPERTI SEBELUMNYA) -->
+        <!-- Konten Statistik (HTML TELAH DIUBAH) -->
         <div class="row">
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="stat-card">
+                    <!-- PERUBAHAN HTML: .stat-icon -> .stat-icon-circle .blue -->
                     <div class="d-flex align-items-center">
-                        <div class="stat-icon bg-primary me-3"><i class="bi bi-calendar2-check"></i></div>
+                        <div class="stat-icon-circle blue me-3"><i class="bi bi-calendar2-check"></i></div>
                         <div>
                             <h3><?php echo $stat_res_aktif; ?></h3>
                             <p>Reservasi Aktif</p>
@@ -303,8 +316,9 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             </div>
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="stat-card">
-                    <div class="d-flex align-items: center">
-                        <div class="stat-icon bg-success me-3"><i class="bi bi-door-open"></i></div>
+                    <!-- PERUBAHAN HTML: .stat-icon -> .stat-icon-circle .green -->
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon-circle green me-3"><i class="bi bi-door-open"></i></div>
                         <div>
                             <h3><?php echo $stat_kamar; ?></h3>
                             <p>Kamar Tersedia</p>
@@ -314,8 +328,10 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             </div>
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="stat-card">
-                    <div class="d-flex align-items: center">
-                        <div class="stat-icon bg-info me-3"><i class="bi bi-people"></i></div>
+                    <!-- PERUBAHAN HTML: .stat-icon -> .stat-icon-circle .orange -->
+                    <div class="d-flex align-items-center">
+                        <!-- Mengganti bg-info dengan gaya oranye dari gambar -->
+                        <div class="stat-icon-circle orange me-3"><i class="bi bi-people"></i></div>
                         <div>
                             <h3><?php echo $stat_tamu; ?></h3>
                             <p>Total Tamu Terdaftar</p>
@@ -325,8 +341,10 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             </div>
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="stat-card">
-                    <div class="d-flex align-items: center">
-                        <div class="stat-icon bg-warning me-3"><i class="bi bi-building"></i></div>
+                    <!-- PERUBAHAN HTML: .stat-icon -> .stat-icon-circle .purple -->
+                    <div class="d-flex align-items-center">
+                        <!-- Mengganti bg-warning dengan gaya ungu dari gambar -->
+                        <div class="stat-icon-circle purple me-3"><i class="bi bi-building"></i></div>
                         <div>
                             <h3><?php echo $stat_properti; ?></h3>
                             <p>Total Properti</p>
@@ -387,14 +405,6 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
-<!-- 
-  ==========================================================
-  == JS INTERNAL BARU (TIDAK DIPERLUKAN LAGI) ==
-  ==========================================================
-  Script 'active' link tidak diperlukan lagi karena 
-  pengecekan 'active' kini ditangani oleh PHP di sidebar_baru.php
-  untuk performa yang lebih baik.
--->
 <script>
     // Script JavaScript kustom bisa ditambahkan di sini jika perlu.
     // Untuk saat ini, Bootstrap sudah menangani buka/tutup sidebar.
@@ -402,3 +412,4 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
 
 </body>
 </html>
+
