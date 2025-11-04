@@ -52,11 +52,11 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             
             /* Warna (Palette Baru Sesuai Gambar) */
             /* PERUBAHAN: Menggunakan gradien untuk background sidebar */
-            --sidebar-bg: linear-gradient(180deg, #232a4a, #1a1f33);
+            /* --sidebar-bg: linear-gradient(180deg, #232a4a, #1a1f33);
             --sidebar-text: rgba(255, 255, 255, 0.7);
             --sidebar-text-active: #232a4a;
             --sidebar-active-pill: #ffffff;
-            --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
+            --sidebar-hover-bg: rgba(255, 255, 255, 0.05); */
             
             /* Warna Konten */
             --bg-light: #f9fafb;      /* Latar belakang body lebih cerah */
@@ -86,10 +86,10 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
          * menjadi .sidebar-nav-wrapper.offcanvas
          * Ini untuk mengalahkan selektor .offcanvas bawaan Bootstrap
          */
-        .sidebar-nav-wrapper.offcanvas {
+        /* .sidebar-nav-wrapper.offcanvas {
             width: var(--sidebar-width);
-            background: var(--sidebar-bg); /* <-- Menggunakan 'background' untuk gradien */
-            border-right: none; /* Hapus border, ganti shadow */
+            background: var(--sidebar-bg);
+            border-right: none;  
             transition: transform 0.3s ease-in-out;
         }
         
@@ -97,15 +97,15 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             padding: 1.25rem 1.5rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             font-weight: 600;
-            color: var(--bg-white); /* Teks header jadi putih */
-        }
+            color: var(--bg-white); 
+        } 
         
         .sidebar-nav {
-            padding: 1rem; /* Padding untuk keseluruhan grup menu */
+            padding: 1rem;  
         }
 
         .sidebar-nav .nav-item {
-            margin-bottom: 0.25rem; /* Jarak antar item menu */
+            margin-bottom: 0.25rem;  
         }
 
         .sidebar-nav .nav-link {
@@ -113,22 +113,22 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             align-items: center;
             font-size: 0.95rem;
             font-weight: 500;
-            color: var(--sidebar-text); /* Teks sidebar jadi terang */
-            padding: 0.8rem 1.25rem; /* Padding internal link */
-            border-radius: 0.75rem; /* Sudut lebih melengkung */
+            color: var(--sidebar-text); 
+            padding: 0.8rem 1.25rem; 
+            border-radius: 0.75rem;
             transition: all 0.2s ease-in-out;
         }
 
         .sidebar-nav .nav-link i {
             font-size: 1.2rem;
             margin-right: 1rem;
-            width: 24px; /* Lebar ikon tetap */
+            width: 24px; 
             text-align: center;
-            color: var(--sidebar-text); /* Ikon sidebar jadi terang */
+            color: var(--sidebar-text); 
             transition: all 0.2s ease-in-out;
         }
         
-        /* Efek Hover */
+        
         .sidebar-nav .nav-link:hover {
             background-color: var(--sidebar-hover-bg);
             color: var(--bg-white);
@@ -137,7 +137,7 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             color: var(--bg-white);
         }
         
-        /* Status Aktif (Gaya "Pill" Putih) */
+        
         .sidebar-nav .nav-link.active {
             background-color: var(--sidebar-active-pill);
             color: var(--sidebar-text-active);
@@ -148,7 +148,7 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             color: var(--sidebar-text-active);
         }
 
-        /* Tombol Logout Khusus */
+       
         .sidebar-nav .nav-link-logout {
             margin-top: 1rem;
             padding-top: 1rem;
@@ -158,12 +158,12 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
         }
         .sidebar-nav .nav-link-logout:hover {
             opacity: 1;
-            background-color: rgba(220, 53, 69, 0.1); /* Hover merah */
+            background-color: rgba(220, 53, 69, 0.1); 
             color: #dc3545;
         }
         .sidebar-nav .nav-link-logout:hover i {
             color: #dc3545;
-        }
+        } */
 
 
         /* * 2. STYLING KONTEN UTAMA
@@ -179,20 +179,20 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
          */
         @media (min-width: 992px) {
             /* PERUBAHAN: Selektor juga diperkuat di sini */
-            .sidebar-nav-wrapper.offcanvas {
+            /* .sidebar-nav-wrapper.offcanvas {
                 position: fixed;
                 top: 0;
                 left: 0;
                 bottom: 0;
                 transform: none !important;
                 visibility: visible !important;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Shadow pemisah */
-            }
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); 
+            } */
             
-            #main-content {
+            /* #main-content {
                 margin-left: var(--sidebar-width);
                 width: calc(100% - var(--sidebar-width));
-            }
+            } */
         }
 
         /* * 4. STYLING KONTEN (CARD, HEADER, DLL)
