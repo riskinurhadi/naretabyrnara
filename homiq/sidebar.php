@@ -190,6 +190,24 @@ $current_page = basename($_SERVER['PHP_SELF']);
             transform: none !important;
             visibility: visible !important;
         }
+        
+        /* Sembunyikan header di desktop mode */
+        .sidebar-modern .offcanvas-header {
+            display: none;
+        }
+        
+        /* Adjust padding body karena header tidak ada */
+        .sidebar-modern .offcanvas-body {
+            padding-top: 1.75rem;
+            padding-bottom: 1.5rem;
+        }
+    }
+    
+    /* Tampilkan header hanya di mobile */
+    @media (max-width: 991.98px) {
+        .sidebar-modern .offcanvas-header {
+            display: block;
+        }
     }
 
     /* Smooth Scrollbar */
