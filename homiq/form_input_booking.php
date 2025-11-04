@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                      platform_booking, status_booking, status_pembayaran, catatan_operator, dibuat_oleh_user) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, 'Booking', ?, ?, ?)
                 ");
-                $stmt_reservasi->bind_param("iissdsssi", $id_kamar, $id_tamu, $tgl_checkin, $tgl_checkout, 
+                $stmt_reservasi->bind_param("iissdisssi", $id_kamar, $id_tamu, $tgl_checkin, $tgl_checkout, 
                                            $harga_total, $jumlah_tamu, $platform_booking, $status_pembayaran, 
                                            $catatan_operator, $user_id);
                 
