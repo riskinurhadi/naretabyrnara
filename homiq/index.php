@@ -1,140 +1,178 @@
 <?php
-session_start();
-
-// Cek apakah user sudah login
-if (!isset($_SESSION['id_user'])) {
-    header("Location: login.php");
-    exit();
-}
+// Selalu panggil auth_check di baris paling atas!
+require_once 'auth_check.php';
+require_once 'koneksi.php';
 
 // Ambil data user dari session
-$nama_lengkap = $_SESSION['nama_lengkap'];
-$role = $_SESSION['role'];
-?>
+$nama_user = htmlspecialchars($_SESSION['nama_lengkap']);
+$role_user = htmlspecialchars($_SESSION['role']);
 
+// -----------------------------------------------------------------
+// MENGAMBIL DATA STATISTIK DARI DATABASE
+// -----------------------------------------------------------------
+
+// 1. Total Reservasi Aktif (Booking / Checked-in)
+$stmt_res_aktif = $koneksi->query("SELECT COUNT(*) as total FROM tbl_reservasi WHERE status_booking IN ('Booking', 'Checked-in')");
+$stat_res_aktif = $stmt_res_aktif->fetch_assoc()['total'];
+
+// 2. Total Kamar (yang statusnya 'Tersedia')
+$stmt_kamar = $koneksi->query("SELECT COUNT(*) as total FROM tbl_kamar WHERE status = 'Tersedia'");
+$stat_kamar = $stmt_kamar->fetch_assoc()['total'];
+
+// 3. Total Tamu Terdaftar
+$stmt_tamu = $koneksi->query("SELECT COUNT(*) as total FROM tbl_tamu");
+$stat_tamu = $stmt_tamu->fetch_assoc()['total'];
+
+// 4. Total Properti Terdaftar
+$stmt_properti = $koneksi->query("SELECT COUNT(*) as total FROM tbl_properti");
+$stat_properti = $stmt_properti->fetch_assoc()['total'];
+
+
+// 5. Mengambil 5 Reservasi Terbaru
+$query_reservasi = "
+    SELECT r.tgl_checkin, t.nama_lengkap, k.nama_kamar, p.nama_properti
+    FROM tbl_reservasi r
+    JOIN tbl_tamu t ON r.id_tamu = t.id_tamu
+    JOIN tbl_kamar k ON r.id_kamar = k.id_kamar
+    JOIN tbl_properti p ON k.id_properti = p.id_properti
+    WHERE r.status_booking IN ('Booking', 'Checked-in')
+    ORDER BY r.tgl_checkin ASC
+    LIMIT 5
+";
+$result_reservasi_terbaru = $koneksi->query($query_reservasi);
+
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Adiputra CMS</title>
+    <title>Dashboard - CMS Guesthouse Adiputra</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     
     <style>
-        /* CSS Internal untuk Dashboard */
+        /* CSS Internal untuk Tampilan Clean & Modern */
         :root {
-            --sidebar-width: 280px;
-            --primary-light: #e6f2ff; /* Biru langit muda untuk hover/active */
-            --primary-dark: #0056b3;
+            --sidebar-width: 260px;
+            --bg-light: #f4f7f6; /* Latar belakang utama (mirip gambar) */
+            --bg-white: #ffffff;
+            --text-dark: #343a40;
+            --text-muted: #6c757d;
+            --active-bg: #e0f2f1; /* Hijau muda untuk link aktif */
+            --active-color: #00796b; /* Hijau tua untuk link aktif */
         }
 
         body {
-            background-color: #f8f9fa; /* Latar belakang abu-abu muda */
-            font-family: 'Inter', sans-serif; /* Font modern (opsional, ganti/tambahkan link di head) */
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
-        /* --- Sidebar Style --- */
-        .sidebar-wrapper {
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ------------------------- */
+        /* Sidebar Styling */
+        /* ------------------------- */
+        #sidebar {
             width: var(--sidebar-width);
-            height: 100vh;
+            min-height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
-            background-color: #ffffff; /* Warna sidebar putih bersih */
-            border-right: 1px solid #dee2e6;
-            padding-top: 1rem;
-            transition: all 0.3s;
+            background-color: var(--bg-white);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            padding: 1.25rem;
+            z-index: 1000;
         }
+
         .sidebar-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
             border-bottom: 1px solid #eee;
         }
-        .sidebar-nav {
-            padding: 1rem;
-        }
+
         .sidebar-nav .nav-item {
             margin-bottom: 0.25rem;
         }
+
         .sidebar-nav .nav-link {
             display: flex;
             align-items: center;
-            color: #555; /* Warna teks menu */
+            color: var(--text-muted);
             font-weight: 500;
             padding: 0.75rem 1rem;
-            border-radius: 0.5rem; /* Sudut rounded untuk link */
+            border-radius: 0.375rem; /* rounded-pill */
+            transition: all 0.2s ease-in-out;
         }
         .sidebar-nav .nav-link i {
-            font-size: 1.1rem;
-            margin-right: 1rem;
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
             width: 20px;
-            color: #888; /* Warna ikon abu-abu */
+            text-align: center;
         }
         .sidebar-nav .nav-link:hover {
-            background-color: var(--primary-light);
-            color: var(--primary-dark);
-        }
-        .sidebar-nav .nav-link:hover i {
-            color: var(--primary-dark);
+            background-color: var(--bg-light);
+            color: var(--text-dark);
         }
         .sidebar-nav .nav-link.active {
-            background-color: #0d6efd; /* Biru langit/primary */
-            color: #ffffff;
-            font-weight: 600;
-            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
+            background-color: var(--active-bg);
+            color: var(--active-color);
         }
         .sidebar-nav .nav-link.active i {
-            color: #ffffff;
-        }
-        .sidebar-nav .nav-item-header {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #aaa;
-            padding: 1rem 1rem 0.5rem;
-            text-transform: uppercase;
-        }
-        .sidebar-divider {
-            margin: 1rem;
-            border-top: 1px solid #eee;
+            color: var(--active-color);
         }
 
-        /* --- Content Style --- */
-        .content-wrapper {
+        /* ------------------------- */
+        /* Main Content Styling */
+        /* ------------------------- */
+        #main-content {
             margin-left: var(--sidebar-width);
-            padding: 2rem;
             width: calc(100% - var(--sidebar-width));
+            padding: 1.5rem;
         }
 
-        /* --- Header/Navbar Konten --- */
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            background: #fff;
-            padding: 1rem 2rem;
+        .main-header {
+            background-color: var(--bg-white);
+            padding: 1rem 1.5rem;
             border-radius: 0.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        /* --- Stats Card (Meniru Referensi) --- */
-        .stat-card {
-            background-color: #fff;
-            border: none;
-            border-radius: 0.75rem; 
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s ease-in-out;
             margin-bottom: 1.5rem;
         }
+
+        .user-profile .dropdown-toggle::after {
+            display: none; /* Sembunyikan panah default dropdown */
+        }
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* ------------------------- */
+        /* Stat Card Styling (Mirip Gambar) */
+        /* ------------------------- */
+        .stat-card {
+            background-color: var(--bg-white);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease-in-out;
+            border: none;
+            height: 100%;
+        }
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
         }
-        .stat-card .card-body {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .stat-card .icon-circle {
+        .stat-icon {
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -143,146 +181,259 @@ $role = $_SESSION['role'];
             justify-content: center;
             font-size: 1.5rem;
             color: #fff;
+            flex-shrink: 0; /* Mencegah icon 'gepeng' */
         }
-        /* Variasi warna ikon seperti di referensi */
-        .icon-circle-blue { background-color: #e6f2ff; color: #0d6efd; }
-        .icon-circle-green { background-color: #e3fcec; color: #198754; }
-        .icon-circle-orange { background-color: #fff3e0; color: #fd7e14; }
-        .icon-circle-purple { background-color: #f3e8ff; color: #6f42c1; }
-        
-        /* Konten Lainnya */
-        .main-content-card {
-             background-color: #fff;
-            border: none;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .stat-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
         }
 
+        /* Content Card */
+        .content-card {
+            background-color: var(--bg-white);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: none;
+            height: 100%;
+        }
+        .content-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .content-card-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+        .content-card-header .btn-link {
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
 
-    <?php include 'sidebar.php'; ?>
+<div class="wrapper">
+    
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            Guesthouse Adiputra
+        </div>
 
-    <main class="content-wrapper">
-        
-        <header class="content-header">
-            <div>
-                <h2 class="h4 fw-bold mb-0">Selamat Datang, <?php echo htmlspecialchars($nama_lengkap); ?>!</h2>
-                <p class="text-muted mb-0">Berikut adalah ringkasan aktivitas di guesthouse Anda.</p>
-            </div>
-            <div class="d-flex align-items-center">
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($nama_lengkap); ?>&background=0d6efd&color=fff&rounded=true" alt="" width="32" height="32" class="rounded-circle me-2">
-                        <strong><?php echo htmlspecialchars($role); ?></strong>
+        <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="dashboard.php">
+                    <i class="bi bi-grid"></i> Dashboard
+                </a>
+            </li>
+            
+            <?php // Tampilkan menu berdasarkan ROLE ?>
+            
+            <?php if (in_array($role_user, ['admin', 'front_office'])): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="reservasi_kalender.php"> <i class="bi bi-calendar-check"></i> Reservasi
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUser">
-                        <li><a class="dropdown-item" href="#">Profil</a></li>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tamu_data.php"> <i class="bi bi-people"></i> Data Tamu
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (in_array($role_user, ['admin', 'housekeeping'])): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="kamar_status.php"> <i class="bi bi-house-check"></i> Status Kamar
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="maintenance_laporan.php"> <i class="bi bi-wrench-adjustable"></i> Maintenance
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if ($role_user == 'admin'): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="laporan_keuangan.php"> <i class="bi bi-journal-text"></i> Laporan
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="pengaturan_properti.php"> <i class="bi bi-gear"></i> Pengaturan
+                    </a>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+
+    <div id="main-content">
+        
+        <header class="main-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0">Selamat Datang, <?php echo $nama_user; ?>!</h5>
+                <small class="text-muted">Berikut adalah ringkasan aktivitas terbaru.</small>
+            </div>
+            
+            <div class="user-profile">
+                <div class="dropdown">
+                    <a class="dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($nama_user); ?>&background=random&color=fff" alt="User" class="me-2">
+                        <div>
+                            <span class="d-none d-md-inline"><strong><?php echo $nama_user; ?></strong></span>
+                            <br>
+                            <small class="d-none d-md-inline text-muted"><?php echo ucwords(str_replace('_', ' ', $role_user)); ?></small>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="#">Profil Saya</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                        <li><a class="dropdown-item text-danger" href="logout.php">
+                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                        </a></li>
                     </ul>
                 </div>
             </div>
         </header>
 
         <div class="row">
-            <div class="col-lg-4 col-md-6">
-                <div class="card stat-card">
-                    <div class="card-body">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon bg-primary me-3">
+                            <i class="bi bi-calendar2-check"></i>
+                        </div>
                         <div>
-                            <h5 class="card-title text-muted fw-normal mb-1">Reservasi Hari Ini</h5>
-                            <h2 class="fw-bold mb-0">5</h2> </div>
-                        <div class="icon-circle icon-circle-blue">
-                            <i class="bi bi-calendar-check"></i>
+                            <h3><?php echo $stat_res_aktif; ?></h3>
+                            <p>Reservasi Aktif</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="card stat-card">
-                    <div class="card-body">
-                        <div>
-                            <h5 class="card-title text-muted fw-normal mb-1">Tamu Check-in</h5>
-                            <h2 class="fw-bold mb-0">12</h2> </div>
-                        <div class="icon-circle icon-circle-green">
-                            <i class="bi bi-box-arrow-in-right"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="card stat-card">
-                    <div class="card-body">
-                        <div>
-                            <h5 class="card-title text-muted fw-normal mb-1">Kamar Tersedia</h5>
-                            <h2 class="fw-bold mb-0">8</h2> </div>
-                        <div class="icon-circle icon-circle-orange">
+            
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon bg-success me-3">
                             <i class="bi bi-door-open"></i>
+                        </div>
+                        <div>
+                            <h3><?php echo $stat_kamar; ?></h3>
+                            <p>Kamar Tersedia</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon bg-info me-3">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div>
+                            <h3><?php echo $stat_tamu; ?></h3>
+                            <p>Total Tamu Terdaftar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon bg-warning me-3">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <div>
+                            <h3><?php echo $stat_properti; ?></h3>
+                            <p>Total Properti</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row mt-3">
-            <div class="col-12">
-                <div class="card main-content-card">
-                    <div class="card-header bg-white border-0 pt-3">
-                        <h5 class="fw-bold">Reservasi Terbaru</h5>
+        
+        <div class="row">
+            <div class="col-lg-7 mb-4">
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <h5><i class="bi bi-calendar-event me-2"></i> Reservasi Mendatang</h5>
+                        <a href="reservasi_daftar.php" class="btn btn-link">Lihat Semua</a>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center text-muted">
-                            (Di sini nanti akan ada tabel Kalender View atau List View reservasi)
-                        </p>
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Nama Tamu</th>
-                                    <th>Kamar</th>
-                                    <th>Check-in</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-borderless">
                             <tbody>
-                                <tr>
-                                    <td>Budi Santoso</td>
-                                    <td>101 - Deluxe</td>
-                                    <td>03 Nov 2025</td>
-                                    <td><span class="badge bg-success">Checked-in</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Citra Lestari</td>
-                                    <td>102 - Standard</td>
-                                    <td>03 Nov 2025</td>
-                                    <td><span class="badge bg-primary">Booking</span></td>
-                                </tr>
+                                <?php if ($result_reservasi_terbaru->num_rows > 0): ?>
+                                    <?php while($row = $result_reservasi_terbaru->fetch_assoc()): ?>
+                                        <tr>
+                                            <td>
+                                                <strong><?php echo htmlspecialchars($row['nama_lengkap']); ?></strong>
+                                                <br>
+                                                <small class="text-muted"><?php echo htmlspecialchars($row['nama_kamar']); ?> (<?php echo htmlspecialchars($row['nama_properti']); ?>)</small>
+                                            </td>
+                                            <td class="text-end">
+                                                <span class="badge bg-light text-dark">Check-in: <?php echo date('d M Y', strtotime($row['tgl_checkin'])); ?></span>
+                                            </td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="2" class="text-center text-muted">
+                                            <i class="bi bi-moon-stars me-2"></i> Tidak ada reservasi mendatang.
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+
+            <div class="col-lg-5 mb-4">
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <h5><i class="bi bi-clipboard2-check me-2"></i> Aktivitas Housekeeping</h5>
+                        <a href="#" class="btn btn-link">Lihat Laporan</a>
+                    </div>
+                    <div classs="text-center text-muted p-4">
+                        <p>Tidak ada laporan maintenance baru.</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">Buat Laporan Baru</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
-    </main>
-    
+    </div>
+</div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        /* JS Internal bisa ditambahkan di sini */
-        
-        // Contoh: Script untuk toggle active class di sidebar
+        // (Opsional) JS Internal di sini
+        // Contoh: membuat link sidebar aktif berdasarkan URL
         document.addEventListener("DOMContentLoaded", function() {
-            const currentLocation = window.location.href;
-            const navLinks = document.querySelectorAll(".sidebar-nav .nav-link");
+            const currentLocation = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
 
             navLinks.forEach(link => {
-                if (link.href === currentLocation) {
-                    // Hapus 'active' dari semua link dulu
-                    navLinks.forEach(l => l.classList.remove("active"));
-                    // Tambahkan 'active' ke link yang cocok
-                    link.classList.add("active");
+                if (link.getAttribute('href') === currentLocation) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active'); // Hapus 'active' dari yg lain
                 }
             });
+
+            // Jika di halaman dashboard.php, pastikan link dashboard yg aktif
+            if (currentLocation === 'dashboard.php' || currentLocation === '') {
+                 document.querySelector('.sidebar-nav .nav-link[href="dashboard.php"]').classList.add('active');
+            }
         });
     </script>
 </body>
