@@ -496,21 +496,55 @@ $koneksi->close();
                                 <i class="bi bi-list-ul me-2"></i>Kembali ke Daftar
                             </a>
                             <?php if ($reservasi['status_booking'] == 'Booking'): ?>
-                                <button class="btn btn-success" onclick="updateStatus('Checked-in')">
-                                    <i class="bi bi-check-circle me-2"></i>Check-in
-                                </button>
-                            <?php endif; ?>
-                            <?php if ($reservasi['status_booking'] == 'Checked-in'): ?>
-                                <button class="btn btn-warning" onclick="updateStatus('Checked-out')">
-                                    <i class="bi bi-box-arrow-right me-2"></i>Check-out
+                                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalIdentitas">
+                                    <i class="bi bi-check-circle me-2"></i>Check-in & Ambil Identitas
                                 </button>
                             <?php endif; ?>
                             <?php if (in_array($reservasi['status_booking'], ['Booking', 'Checked-in'])): ?>
-                                <button class="btn btn-danger" onclick="updateStatus('Canceled')">
+                                <button class="btn btn-danger" onclick="doUpdateStatus('cancel')">
                                     <i class="bi bi-x-circle me-2"></i>Batalkan Reservasi
                                 </button>
                             <?php endif; ?>
                         </div>
+                    </div>
+
+                    <!-- Modal Ambil/Upload Identitas -->
+                    <div class="modal fade" id="modalIdentitas" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title"><i class="bi bi-camera me-2"></i>Ambil/Upload Foto Identitas</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-7">
+                                    <div class="ratio ratio-4x3 bg-dark rounded overflow-hidden">
+                                        <video id="video" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+                                        <canvas id="canvas" style="display:none;"></canvas>
+                                    </div>
+                                    <div class="mt-2 d-flex gap-2">
+                                        <button class="btn btn-secondary" type="button" id="btnStartCam"><i class="bi bi-camera-video"></i> Nyalakan Kamera</button>
+                                        <button class="btn btn-outline-primary" type="button" id="btnCapture"><i class="bi bi-camera"></i> Ambil Foto</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <form id="uploadForm" enctype="multipart/form-data">
+                                        <input type="hidden" name="id_reservasi" value="<?php echo $id_reservasi; ?>">
+                                        <div class="mb-3">
+                                            <label class="form-label">Upload File (opsional)</label>
+                                            <input type="file" class="form-control" name="foto" accept="image/*">
+                                        </div>
+                                        <div class="alert alert-info small">Anda dapat menggunakan kamera PC/laptop atau upload foto dari perangkat lain.</div>
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" id="btnUpload"><i class="bi bi-cloud-upload"></i> Simpan & Check-in</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                 </div>
             </div>
@@ -519,11 +553,56 @@ $koneksi->close();
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function updateStatus(newStatus) {
-            if (confirm('Apakah Anda yakin ingin mengubah status menjadi "' + newStatus + '"?')) {
-                // Implementasi update status via AJAX atau form
-                alert('Fitur update status akan diimplementasikan di tahap berikutnya.');
-            }
+        function doUpdateStatus(action) {
+            if (!confirm('Lanjutkan tindakan ini?')) return;
+            const formData = new FormData();
+            formData.append('id', <?php echo $id_reservasi; ?>);
+            formData.append('action', action);
+            fetch('update_reservasi.php', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.ok) { location.reload(); }
+                    else { alert(res.message || 'Gagal memperbarui status'); }
+                })
+                .catch(() => alert('Gagal memperbarui status'));
+        }
+
+        // Kamera
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const btnStartCam = document.getElementById('btnStartCam');
+        const btnCapture = document.getElementById('btnCapture');
+        const btnUpload = document.getElementById('btnUpload');
+        const uploadForm = document.getElementById('uploadForm');
+
+        let stream;
+        if (btnStartCam) {
+            btnStartCam.onclick = async () => {
+                try { stream = await navigator.mediaDevices.getUserMedia({ video: true }); video.srcObject = stream; }
+                catch (e) { alert('Kamera tidak tersedia: ' + e.message); }
+            };
+        }
+        if (btnCapture) {
+            btnCapture.onclick = () => {
+                if (!video.srcObject) { alert('Kamera belum aktif'); return; }
+                canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            };
+        }
+        if (btnUpload) {
+            btnUpload.onclick = async () => {
+                const fd = new FormData(uploadForm);
+                // Jika ada hasil capture di canvas, kirim base64
+                if (canvas && canvas.width) {
+                    fd.append('image_base64', canvas.toDataURL('image/jpeg', 0.9));
+                }
+                const res = await fetch('upload_identitas.php', { method: 'POST', body: fd });
+                const js = await res.json();
+                if (!js.ok) { alert(js.message || 'Gagal upload identitas'); return; }
+                // Setelah upload sukses, update status ke Checked-in
+                doUpdateStatus('checkin');
+            };
         }
     </script>
 </body>
