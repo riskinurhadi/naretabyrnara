@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 (tgl_checkin >= ? AND tgl_checkout > ?)
             )
         ");
-        $check_available->bind_param("isssssss", $id_kamar, $tgl_checkin, $tgl_checkin, $tgl_checkout, $tgl_checkout, $tgl_checkin, $tgl_checkout);
+        $check_available->bind_param("issssss", $id_kamar, $tgl_checkin, $tgl_checkin, $tgl_checkout, $tgl_checkout, $tgl_checkin, $tgl_checkout);
         $check_available->execute();
         $result_check = $check_available->get_result();
         $available = $result_check->fetch_assoc()['total'];
