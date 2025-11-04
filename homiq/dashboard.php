@@ -262,7 +262,7 @@ $koneksi->close();
         /* MAIN CONTENT */
         #main-content {
             margin-left: 0;
-            padding: 2rem;
+            padding: 1.5rem;
             transition: margin-left 0.3s ease;
             width: 100%;
             max-width: 100%;
@@ -285,10 +285,10 @@ $koneksi->close();
         /* HEADER */
         .main-header {
             background: var(--bg-white);
-            padding: 1.5rem 2rem;
+            padding: 1.25rem 1.5rem;
             border-radius: 1.25rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             border: 1px solid var(--border-color);
             width: 100%;
             max-width: 100%;
@@ -321,7 +321,7 @@ $koneksi->close();
         .stat-card {
             background: var(--bg-white);
             border-radius: 1.25rem;
-            padding: 1.5rem;
+            padding: 1.25rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
             height: 100%;
@@ -350,7 +350,7 @@ $koneksi->close();
         .stat-icon-circle.purple { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); color: #8b5cf6; }
 
         .stat-card h3 {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 800;
             margin: 0;
             color: var(--text-dark);
@@ -402,7 +402,7 @@ $koneksi->close();
         }
 
         .calendar-header {
-            padding: 1.5rem 2rem;
+            padding: 1.125rem 1.5rem;
             border-bottom: 2px solid var(--border-color);
             display: flex;
             justify-content: space-between;
@@ -491,9 +491,9 @@ $koneksi->close();
             padding: 0.5rem;
             border: 1px solid var(--border-color);
             vertical-align: top;
-            min-width: 100px;
-            max-width: 120px;
-            width: 120px;
+            min-width: 90px;
+            max-width: 110px;
+            width: 110px;
         }
 
         .room-name-cell {
@@ -506,9 +506,9 @@ $koneksi->close();
             z-index: 15;
             border-right: 2px solid var(--border-color);
             box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-            min-width: 200px;
-            max-width: 200px;
-            width: 200px;
+            min-width: 180px;
+            max-width: 180px;
+            width: 180px;
         }
 
         .room-name-cell small {
@@ -550,6 +550,19 @@ $koneksi->close();
                 width: 150px;
                 font-size: 0.8rem;
             }
+        }
+
+        /* Laptop compact sizing */
+        @media (max-width: 1440px) {
+            #main-content { padding: 1.25rem; }
+            .main-header { padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+            .stat-card { padding: 1rem; }
+            .stat-card h3 { font-size: 1.5rem; }
+            .stat-icon-circle { width: 48px; height: 48px; font-size: 1.25rem; }
+            .calendar-header { padding: 1rem 1.25rem; }
+            .calendar-table td { min-width: 85px; max-width: 100px; width: 100px; }
+            .room-name-cell { min-width: 160px; max-width: 160px; width: 160px; }
+            .calendar-day { min-height: 70px; }
         }
 
         .calendar-day-number {
