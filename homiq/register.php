@@ -1,58 +1,52 @@
 <?php
 session_start();
-// PASTIKAN FILE INI ADA DAN KONFIGURASINYA BENAR
-include 'koneksi.php'; 
+require_once 'koneksi.php';
 
-$success_message = '';
 $error_message = '';
+$success_message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nama_lengkap = $_POST['nama_lengkap'];
-    $username = $_POST['username'];
+    $username = $koneksi->real_escape_string($_POST['username']);
+    $nama_lengkap = $koneksi->real_escape_string($_POST['nama_lengkap']);
     $password = $_POST['password'];
-    $role = $_POST['role'];
+    $konfirmasi_password = $_POST['konfirmasi_password'];
+    $role = $koneksi->real_escape_string($_POST['role']);
 
     // Validasi sederhana
-    if (empty($nama_lengkap) || empty($username) || empty($password) || empty($role)) {
+    if (empty($username) || empty($nama_lengkap) || empty($password) || empty($role)) {
         $error_message = "Semua field wajib diisi.";
+    } elseif ($password !== $konfirmasi_password) {
+        $error_message = "Password dan Konfirmasi Password tidak cocok.";
     } else {
-        // HASH PASSWORD! Ini sangat penting.
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-        // --- INI ADALAH BAGIAN YANG DIPERBAIKI ---
-        
-        // 1. Cek dulu apakah username sudah ada
+        // Cek apakah username sudah ada
         $stmt_check = $koneksi->prepare("SELECT id_user FROM tbl_users WHERE username = ?");
         $stmt_check->bind_param("s", $username);
         $stmt_check->execute();
         $result_check = $stmt_check->get_result();
-        
-        if ($result_check->num_rows > 0) {
-            // Jika username sudah ada
-            $error_message = "Username '$username' sudah terdaftar. Silakan gunakan username lain.";
-        } else {
-            // 2. Jika aman, masukkan data baru
-            $stmt = $koneksi->prepare("INSERT INTO tbl_users (nama_lengkap, username, password, role) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("ssss", $nama_lengkap, $username, $hashed_password, $role);
 
-            if ($stmt->execute()) {
-                $success_message = "User baru (".$username.") berhasil ditambahkan.";
+        if ($result_check->num_rows > 0) {
+            $error_message = "Username sudah terdaftar. Silakan gunakan username lain.";
+        } else {
+            // Hash password
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+            // Insert ke database
+            $stmt_insert = $koneksi->prepare("INSERT INTO tbl_users (username, password, nama_lengkap, role) VALUES (?, ?, ?, ?)");
+            $stmt_insert->bind_param("ssss", $username, $hashed_password, $nama_lengkap, $role);
+
+            if ($stmt_insert->execute()) {
+                $_SESSION['success_message'] = "Registrasi berhasil! Silakan login.";
+                header("Location: login.php");
+                exit;
             } else {
-                // Tampilkan error jika query gagal
-                $error_message = "Gagal menambahkan user. Error: " . $stmt->error;
+                $error_message = "Registrasi gagal. Silakan coba lagi. Error: " . $stmt_insert->error;
             }
-            $stmt->close();
+            $stmt_insert->close();
         }
         $stmt_check->close();
-        
-        // --- AKHIR BAGIAN PERBAIKAN ---
-
-        /* // --- BAGIAN TESTING INI SUDAH DIHAPUS ---
-        $success_message = "TESTING: User '$username' dengan role '$role' berhasil dibuat (password: $password).";
-        // --- AKHIR BAGIAN TESTING ---
-        */
     }
 }
+$koneksi->close();
 ?>
 
 <!DOCTYPE html>
@@ -60,84 +54,89 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrasi User - Adiputra CMS</title>
+    <title>Register - CMS Guesthouse Adiputra</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    
     <style>
+        /* CSS Internal untuk tampilan clean & modern */
         body {
-            background-color: #f0f4f8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-color: #f8f9fa; /* Latar belakang abu-abu muda */
+        }
+        .register-container {
             min-height: 100vh;
         }
         .register-card {
-            border: none;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px; /* Batasi lebar form */
+            max-width: 500px;
+            border: none; /* Hilangkan border card */
+            border-radius: 0.75rem; /* Sudut lebih tumpul */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Shadow lebih halus */
         }
-        .register-card .form-control {
-            border-radius: 0.75rem;
-        }
-        .register-card .btn-primary {
-            background-color: #0d6efd;
-            border: none;
-            border-radius: 0.75rem;
-        }
-        .register-card .btn-secondary {
-            border-radius: 0.75rem;
+        .brand-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #343a40;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="card register-card my-5">
-                    <div class="card-body p-4 p-md-5">
-                        <h3 class="text-center fw-bold text-primary mb-4">Tambah User Baru</h3>
-                        <p class="text-center text-muted small">Halaman ini seharusnya hanya bisa diakses oleh Admin.</p>
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-center align-items-center register-container">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card register-card p-4 p-sm-5">
+                    <div class="card-body">
                         
-                        <?php if (!empty($success_message)): ?>
-                            <div class="alert alert-success" role="alert">
-                                <?php echo $success_message; ?>
-                            </div>
-                        <?php endif; ?>
-                        <?php if (!empty($error_message)): ?>
+                        <div class="text-center mb-4">
+                            <span class="brand-logo">Guesthouse Adiputra</span>
+                            <h4 class="mt-2 mb-0">Buat Akun Baru</h4>
+                            <small class="text-muted">Isi data untuk mendaftarkan user baru</small>
+                        </div>
+
+                        <?php if(!empty($error_message)): ?>
                             <div class="alert alert-danger" role="alert">
                                 <?php echo $error_message; ?>
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" action="register.php">
+                        <form method="POST" action="register.php" id="registerForm">
                             <div class="mb-3">
                                 <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
                                 <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required>
                             </div>
+
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
                             </div>
+                            
                             <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="mb-4">
                                 <label for="role" class="form-label">Role</label>
                                 <select class="form-select" id="role" name="role" required>
-                                    <option value="">-- Pilih Role --</option>
+                                    <option value="" disabled selected>-- Pilih Role --</option>
                                     <option value="admin">Admin</option>
                                     <option value="front_office">Front Office</option>
                                     <option value="housekeeping">Housekeeping</option>
                                 </select>
                             </div>
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Daftarkan User</button>
-                                <a href="login.php" class="btn btn-secondary btn-sm">Kembali ke Login</a>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
                             </div>
+
+                            <div class="mb-3">
+                                <label for="konfirmasi_password" class="form-label">Konfirmasi Password</label>
+                                <input type="password" class="form-control" id="konfirmasi_password" name="konfirmasi_password" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-2 mt-3">Register</button>
                         </form>
+                        
+                        <div class="text-center mt-4">
+                            <small class="text-muted">Sudah punya akun? <a href="login.php">Login di sini</a></small>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -145,5 +144,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // (Opsional) Anda bisa menambahkan validasi JS di sini
+        // Misalnya, cek kesamaan password sebelum submit
+    </script>
 </body>
 </html>
