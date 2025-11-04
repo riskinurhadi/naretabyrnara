@@ -299,7 +299,7 @@ $koneksi->close();
         /* MAIN CONTENT */
         #main-content {
             margin-left: 0;
-            padding: 2rem;
+            padding: 1.5rem;
             transition: margin-left 0.3s ease;
             width: 100%;
             max-width: 100%;
@@ -320,10 +320,10 @@ $koneksi->close();
 
         .main-header {
             background: var(--bg-white);
-            padding: 1.5rem 2rem;
+            padding: 1.25rem 1.5rem;
             border-radius: 1.25rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             border: 1px solid var(--border-color);
         }
 
@@ -337,10 +337,10 @@ $koneksi->close();
         .content-card {
             background: var(--bg-white);
             border-radius: 1.25rem;
-            padding: 2rem;
+            padding: 1.25rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-label {
@@ -364,7 +364,7 @@ $koneksi->close();
         .btn-modern {
             border-radius: 0.75rem;
             font-weight: 600;
-            padding: 0.75rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             transition: all 0.2s ease;
         }
 
@@ -376,25 +376,35 @@ $koneksi->close();
         .alert-modern {
             border-radius: 0.75rem;
             border: none;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 0.85rem 1.2rem;
+            margin-bottom: 1.25rem;
         }
 
         .section-divider {
             border-top: 2px solid var(--border-color);
-            margin: 2rem 0;
-            padding-top: 2rem;
+            margin: 1.5rem 0;
+            padding-top: 1.5rem;
         }
 
         .info-box {
             background: var(--bg-light);
-            padding: 1rem;
+            padding: 0.75rem;
             border-radius: 0.75rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
         .info-box strong {
             color: var(--primary-color);
+        }
+
+        /* Laptop compact */
+        @media (max-width: 1366px) {
+            html, body { font-size: 14px; }
+            #main-content { padding: 1.1rem; }
+            .main-header { padding: 1rem 1.25rem; }
+            .content-card { padding: 1rem; }
+            .form-control, .form-select { padding: 0.6rem 0.85rem; }
+            .btn-modern { padding: 0.55rem 1rem; font-size: 0.95rem; }
         }
     </style>
 </head>

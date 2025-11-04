@@ -565,6 +565,24 @@ $koneksi->close();
             .calendar-day { min-height: 70px; }
         }
 
+        /* Very common laptop size */
+        @media (max-width: 1366px) {
+            html, body { font-size: 14px; }
+            #main-content { padding: 1rem; }
+            .main-header { padding: 0.875rem 1rem; margin-bottom: 1rem; }
+            .main-header h5 { font-size: 1.1rem; }
+            .stat-card { padding: 0.875rem; }
+            .stat-icon-circle { width: 42px; height: 42px; font-size: 1.1rem; }
+            .stat-card h3 { font-size: 1.35rem; }
+            .calendar-header { padding: 0.75rem 1rem; }
+            .calendar-header h4 { font-size: 1.05rem; }
+            .calendar-nav .btn { padding: 0.35rem 0.6rem; font-size: 0.85rem; }
+            .calendar-table th { padding: 0.5rem; }
+            .calendar-table td { min-width: 80px; max-width: 95px; width: 95px; padding: 0.4rem; }
+            .room-name-cell { min-width: 150px; max-width: 150px; width: 150px; }
+            .booking-block { font-size: 0.7rem; padding: 0.2rem 0.4rem; }
+        }
+
         .calendar-day-number {
             font-size: 0.85rem;
             font-weight: 600;

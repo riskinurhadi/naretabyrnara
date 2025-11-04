@@ -243,7 +243,7 @@ $koneksi->close();
         /* MAIN CONTENT */
         #main-content {
             margin-left: 0;
-            padding: 2rem;
+            padding: 1.5rem;
             transition: margin-left 0.3s ease;
             width: 100%;
             max-width: 100%;
@@ -264,27 +264,27 @@ $koneksi->close();
 
         .main-header {
             background: var(--bg-white);
-            padding: 1.5rem 2rem;
+            padding: 1.25rem 1.5rem;
             border-radius: 1.25rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             border: 1px solid var(--border-color);
         }
 
         .content-card {
             background: var(--bg-white);
             border-radius: 1.25rem;
-            padding: 2rem;
+            padding: 1.25rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .filter-card {
             background: var(--bg-light);
             border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            padding: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .table-modern {
@@ -294,14 +294,14 @@ $koneksi->close();
         .table-modern thead th {
             background: var(--bg-light);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             border-bottom: 2px solid var(--border-color);
-            padding: 1rem;
+            padding: 0.8rem;
         }
 
         .table-modern tbody td {
-            padding: 1rem;
+            padding: 0.8rem;
             vertical-align: middle;
             border-bottom: 1px solid var(--border-color);
         }
@@ -326,6 +326,17 @@ $koneksi->close();
         .badge-payment.lunas { background: #d1fae5; color: var(--success-color); }
         .badge-payment.dp { background: #fef3c7; color: #f59e0b; }
         .badge-payment.belum-bayar { background: #fee2e2; color: var(--danger-color); }
+
+        /* Laptop compact */
+        @media (max-width: 1366px) {
+            html, body { font-size: 14px; }
+            #main-content { padding: 1.1rem; }
+            .main-header { padding: 1rem 1.25rem; }
+            .filter-card { padding: 0.75rem; }
+            .table-modern thead th { padding: 0.65rem; font-size: 0.8rem; }
+            .table-modern tbody td { padding: 0.65rem; }
+            .btn, .form-select, .form-control { font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
