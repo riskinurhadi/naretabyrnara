@@ -59,10 +59,24 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
         }
 
         /* * ==========================================================
+         * == PERUBAHAN DI SINI: Aturan #main-content (Mobile-First) ==
+         * ==========================================================
+         * Aturan dasar (mobile) untuk #main-content dipindahkan ke SINI, 
+         * SEBELUM @media query, agar bisa ditimpa dengan benar di desktop.
+         */
+        #main-content {
+            padding: 1.5rem;
+            width: 100%;
+            margin-left: 0;
+            /* Transisi opsional agar pergeseran terlihat mulus */
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        /* * ==========================================================
          * == INI ADALAH CSS PENTING UNTUK LAYOUT DESKTOP ==
          * ==========================================================
          * Di layar 992px (desktop) ke atas...
-        */
+         */
         @media (min-width: 992px) {
             
             /* 1. Paksa sidebar (yang aslinya offcanvas) untuk jadi 'fixed' */
@@ -78,20 +92,22 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
                 box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
             }
 
-            /* 2. Beri 'margin-left' ke konten utama seukuran sidebar */
+            /* * 2. Beri 'margin-left' ke konten utama seukuran sidebar 
+             * Aturan ini sekarang akan menimpa 'margin-left: 0' dari aturan dasar di atas.
+             */
             #main-content {
                 margin-left: var(--sidebar-width);
                 width: calc(100% - var(--sidebar-width));
             }
         }
 
-        /* Di bawah 992px (mobile), konten utama akan otomatis 100% width */
-        #main-content {
-            padding: 1.5rem;
-            width: 100%;
-            margin-left: 0;
-        }
-
+        /* * ==========================================================
+         * == ATURAN #main-content YANG SEBELUMNYA DI SINI DIHAPUS ==
+         * ==========================================================
+         * Aturan yang tadinya ada di sini (sekitar baris 81) sudah
+         * dipindahkan ke atas (sebelum blok @media).
+         */
+        
         /* Styling menu di dalam sidebar */
         .sidebar-nav .nav-item { margin-bottom: 0.25rem; }
         .sidebar-nav .nav-link {
@@ -268,26 +284,34 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             </div>
         </div>
 
-    </div> </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </div> <!-- Penutup untuk #main-content -->
+</div> <!-- Penutup untuk .wrapper -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const currentLocation = window.location.pathname.split('/').pop();
-            const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Logika untuk menyorot link sidebar yang aktif
+        const currentLocation = window.location.pathname.split('/').pop();
+        const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
 
-            navLinks.forEach(link => {
-                link.classList.remove('active'); // Hapus 'active' dari semua
-                if (link.getAttribute('href') === currentLocation) {
-                    link.classList.add('active'); // Tambah 'active' ke link yg cocok
-                }
-            });
-
-            // Penanganan khusus untuk dashboard.php
-            if (currentLocation === 'dashboard.php' || currentLocation === '') {
-                 const dashLink = document.querySelector('.sidebar-nav .nav-link[href="dashboard.php"]');
-                 if (dashLink) dashLink.classList.add('active');
+        let foundActive = false;
+        navLinks.forEach(link => {
+            link.classList.remove('active'); // Hapus 'active' dari semua
+            const linkHref = link.getAttribute('href');
+            
+            if (linkHref === currentLocation) {
+                link.classList.add('active');
+                foundActive = true;
             }
         });
-    </script>
+
+        // Penanganan khusus jika berada di root atau dashboard.php
+        if (!foundActive && (currentLocation === 'dashboard.php' || currentLocation === '')) {
+             const dashLink = document.querySelector('.sidebar-nav .nav-link[href="dashboard.php"]');
+             if (dashLink) dashLink.classList.add('active');
+        }
+    });
+</script>
 </body>
 </html>
