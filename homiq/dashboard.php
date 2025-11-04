@@ -35,7 +35,7 @@ while ($row = $result_kamar->fetch_assoc()) {
 
 // Ambil semua reservasi dalam rentang bulan ini
 $query_reservasi = "SELECT r.id_reservasi, r.id_kamar, r.tgl_checkin, r.tgl_checkout, 
-                           r.status_booking, r.status_pembayaran,
+                           r.status_booking, r.status_pembayaran, r.platform_booking,
                            t.nama_lengkap as nama_tamu, t.no_hp,
                            k.nama_kamar, p.nama_properti
                     FROM tbl_reservasi r
@@ -897,7 +897,7 @@ $koneksi->close();
                                                             <div class="booking-block <?php echo $status_class . ' ' . $payment_class; ?>" 
                                                                  title="<?php echo htmlspecialchars($active_booking['nama_tamu']); ?> - <?php echo htmlspecialchars($active_booking['nama_kamar']); ?>">
                                                                 <span class="booking-block-name"><?php echo htmlspecialchars(substr($active_booking['nama_tamu'], 0, 15)); ?></span>
-                                                                <span class="booking-block-detail"><?php echo htmlspecialchars($active_booking['platform_booking']); ?></span>
+                                                                <span class="booking-block-detail"><?php echo htmlspecialchars($active_booking['platform_booking'] ?? 'OTS'); ?></span>
                                                             </div>
                                                         <?php else: ?>
                                                             <div class="empty-day"></div>
