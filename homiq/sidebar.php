@@ -77,7 +77,7 @@ $is_pengaturan_page = (strpos($current_page, 'manajemen_') === 0 || $current_pag
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
+                                <a class="nav-link <?php echo ($current_page == 'manajemen_user.php') ? 'active-submenu' : ''; ?>" href="manajemen_user.php">
                                     User
                                 </a>
                             </li>

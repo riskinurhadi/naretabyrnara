@@ -273,7 +273,7 @@ $koneksi->close();
         /* MAIN CONTENT */
         #main-content {
             margin-left: 0;
-            padding: 2rem;
+            padding: 1.5rem;
             transition: margin-left 0.3s ease;
             width: 100%;
             max-width: 100%;
@@ -296,10 +296,10 @@ $koneksi->close();
         /* HEADER */
         .main-header {
             background: var(--bg-white);
-            padding: 1.5rem 2rem;
+            padding: 1.25rem 1.5rem;
             border-radius: 1.25rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             border: 1px solid var(--border-color);
         }
 
@@ -314,10 +314,10 @@ $koneksi->close();
         .content-card {
             background: var(--bg-white);
             border-radius: 1.25rem;
-            padding: 2rem;
+            padding: 1.25rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .card-header-custom {
@@ -350,14 +350,14 @@ $koneksi->close();
         .table-modern thead th {
             background: var(--bg-light);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             border-bottom: 2px solid var(--border-color);
-            padding: 1rem;
+            padding: 0.8rem;
         }
 
         .table-modern tbody td {
-            padding: 1rem;
+            padding: 0.8rem;
             vertical-align: middle;
             border-bottom: 1px solid var(--border-color);
         }
@@ -370,7 +370,7 @@ $koneksi->close();
         .btn-modern {
             border-radius: 0.75rem;
             font-weight: 600;
-            padding: 0.5rem 1rem;
+            padding: 0.45rem 0.9rem;
             transition: all 0.2s ease;
         }
 
@@ -402,8 +402,8 @@ $koneksi->close();
         .alert-modern {
             border-radius: 0.75rem;
             border: none;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 0.85rem 1.2rem;
+            margin-bottom: 1.25rem;
         }
 
         .badge-modern {
@@ -411,6 +411,17 @@ $koneksi->close();
             border-radius: 0.5rem;
             font-weight: 600;
             font-size: 0.85rem;
+        }
+
+        /* Laptop compact */
+        @media (max-width: 1366px) {
+            html, body { font-size: 14px; }
+            #main-content { padding: 1.1rem; }
+            .main-header { padding: 1rem 1.25rem; }
+            .content-card { padding: 1rem; }
+            .table-modern thead th { padding: 0.65rem; font-size: 0.8rem; }
+            .table-modern tbody td { padding: 0.65rem; }
+            .btn, .form-select, .form-control { font-size: 0.9rem; }
         }
     </style>
 </head>
