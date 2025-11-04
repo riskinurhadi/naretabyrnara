@@ -1,7 +1,5 @@
 <?php
 // manajemen_properti.php
-// (Menggantikan pengaturan_properti.php yang lama)
-
 require_once 'auth_check.php';
 require_once 'koneksi.php';
 
@@ -12,7 +10,7 @@ $role_user = htmlspecialchars($_SESSION['role']); // Dibutuhkan oleh sidebar_bar
 // 🔒 OTORISASI: Halaman ini HANYA untuk ADMIN
 // -----------------------------------------------------------------
 if ($role_user !== 'admin') {
-    header("Location: dashboard.php");
+    header("Location: dashboard_baru.php"); // Arahkan ke dashboard baru
     exit;
 }
 
@@ -54,11 +52,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     elseif ($_POST['action'] == 'hapus') {
         $id_properti = intval($_POST['id_properti']);
         if ($id_properti > 0) {
-            $stmt = $koneksi->prepare("DELETE FROM tbl_properti WHERE id_properti = ?");
-            $stmt->bind_param("i", $id_properti);
-            if ($stmt->execute()) { $success_message = "Properti (dan semua kamar di dalamnya) berhasil dihapus."; }
-            else { $error_message = "Gagal menghapus properti: " . $stmt->error; }
-            $stmt->close();
+            
+            // Pengecekan Keterkaitan Kamar
+            $stmt_check = $koneksi->prepare("SELECT COUNT(*) FROM tbl_kamar WHERE id_properti = ?");
+            $stmt_check->bind_param("i", $id_properti);
+            $stmt_check->execute();
+            $stmt_check->bind_result($jumlah_kamar);
+            $stmt_check->fetch();
+            $stmt_check->close();
+
+            if ($jumlah_kamar > 0) {
+                $error_message = "Gagal menghapus: Properti ini masih memiliki " . $jumlah_kamar . " kamar. Hapus kamar terlebih dahulu.";
+            } else {
+                $stmt = $koneksi->prepare("DELETE FROM tbl_properti WHERE id_properti = ?");
+                $stmt->bind_param("i", $id_properti);
+                if ($stmt->execute()) { $success_message = "Properti berhasil dihapus."; }
+                else { $error_message = "Gagal menghapus properti: " . $stmt->error; }
+                $stmt->close();
+            }
         } else { $error_message = "ID Properti tidak valid."; }
     }
 }
@@ -79,196 +90,75 @@ $result_properti = $koneksi->query($query_properti);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     
-    <!-- 
-      ==========================================================
-      == CSS INTERNAL BARU (DISALIN DARI DASHBOARD_BARU.PHP) ==
-      ==========================================================
-    -->
-    <style>
-        :root {
-            /* Ukuran */
-            --sidebar-width: 280px;
-            
-            /* Warna (Palette Baru Sesuai Gambar) */
-            --sidebar-bg: linear-gradient(180deg, #232a4a, #1a1f33);
-            --sidebar-text: rgba(255, 255, 255, 0.7);
-            --sidebar-text-active: #232a4a;
-            --sidebar-active-pill: #ffffff;
-            --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
-            
-            /* Warna Konten */
-            --bg-light: #f9fafb;      /* Latar belakang body lebih cerah */
-            --bg-white: #ffffff;      /* Latar belakang card */
-            --text-dark: #212529;     /* Teks utama */
-            --text-muted: #6c757d;    /* Teks abu-abu */
-            --border-color: #f0f0f0;  /* Garis batas sangat tipis */
-            
-            /* Warna Ikon Statistik */
-            --color-blue: #0d6efd;      --bg-blue-light: #e7f0ff;
-            --color-green: #198754;     --bg-green-light: #e8f9ee;
-            --color-orange: #fd7e14;    --bg-orange-light: #fff3e8;
-            --color-purple: #6f42c1;    --bg-purple-light: #f3effc;
-        }
+    <!-- BARU: CSS DataTables -->
+    <link href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css" rel="stylesheet">
 
+    <style>
+        /* CSS LOKAL UNTUK KONTEN (BUKAN SIDEBAR) */
+        :root {
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --text-dark: #343a40;
+            --text-muted: #6c757d;
+        }
         body {
             background-color: var(--bg-light);
             color: var(--text-dark);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            overflow-x: hidden; /* Mencegah horizontal scroll */
         }
-
-        /* * 1. STYLING SIDEBAR BARU (Desktop & Mobile)
-         */
-        .sidebar-nav-wrapper.offcanvas {
-            width: var(--sidebar-width);
-            background: var(--sidebar-bg); /* <-- Menggunakan 'background' untuk gradien */
-            border-right: none; /* Hapus border, ganti shadow */
-            transition: transform 0.3s ease-in-out;
-        }
-        
-        .sidebar-nav-wrapper .offcanvas-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-weight: 600;
-            color: var(--bg-white); /* Teks header jadi putih */
-        }
-        
-        .sidebar-nav {
-            padding: 1rem; /* Padding untuk keseluruhan grup menu */
-        }
-
-        .sidebar-nav .nav-item {
-            margin-bottom: 0.25rem; /* Jarak antar item menu */
-        }
-
-        .sidebar-nav .nav-link {
-            display: flex;
-            align-items: center;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--sidebar-text); /* Teks sidebar jadi terang */
-            padding: 0.8rem 1.25rem; /* Padding internal link */
-            border-radius: 0.75rem; /* Sudut lebih melengkung */
-            transition: all 0.2s ease-in-out;
-        }
-
-        .sidebar-nav .nav-link i {
-            font-size: 1.2rem;
-            margin-right: 1rem;
-            width: 24px; /* Lebar ikon tetap */
-            text-align: center;
-            color: var(--sidebar-text); /* Ikon sidebar jadi terang */
-            transition: all 0.2s ease-in-out;
-        }
-        
-        /* Efek Hover */
-        .sidebar-nav .nav-link:hover {
-            background-color: var(--sidebar-hover-bg);
-            color: var(--bg-white);
-        }
-        .sidebar-nav .nav-link:hover i {
-            color: var(--bg-white);
-        }
-        
-        /* Status Aktif (Gaya "Pill" Putih) */
-        .sidebar-nav .nav-link.active {
-            background-color: var(--sidebar-active-pill);
-            color: var(--sidebar-text-active);
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        .sidebar-nav .nav-link.active i {
-            color: var(--sidebar-text-active);
-        }
-
-        /* Tombol Logout Khusus */
-        .sidebar-nav .nav-link-logout {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--sidebar-text);
-            opacity: 0.6;
-        }
-        .sidebar-nav .nav-link-logout:hover {
-            opacity: 1;
-            background-color: rgba(220, 53, 69, 0.1); /* Hover merah */
-            color: #dc3545;
-        }
-        .sidebar-nav .nav-link-logout:hover i {
-            color: #dc3545;
-        }
-
-
-        /* * 2. STYLING KONTEN UTAMA
-         */
-        #main-content {
-            padding: 2rem; /* Padding lebih besar */
-            width: 100%;
-            margin-left: 0;
-            transition: margin-left 0.3s ease-in-out;
-        }
-
-        /* * 3. LOGIKA RESPONSIVE (LAYOUT DESKTOP)
-         */
-        @media (min-width: 992px) {
-            .sidebar-nav-wrapper.offcanvas {
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                transform: none !important;
-                visibility: visible !important;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Shadow pemisah */
-            }
-            
-            #main-content {
-                margin-left: var(--sidebar-width);
-                width: calc(100% - var(--sidebar-width));
-            }
-        }
-
-        /* * 4. STYLING KONTEN (CARD, HEADER, DLL)
-         */
         .main-header {
             background-color: var(--bg-white);
-            padding: 1rem 1.5rem;
-            border-radius: 1rem; /* Lebih bulat */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-            margin-bottom: 2rem; /* Jarak lebih besar */
-            border: 1px solid var(--border-color);
-        }
-        .user-profile .dropdown-toggle::after { display: none; }
-        .user-profile img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        
-        /* GAYA CONTENT CARD BAWAH */
-        .content-card { 
-            background-color: var(--bg-white);
-            border-radius: 1rem; /* Sangat bulat */
             padding: 1.5rem;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border-color);
-            height: 100%; 
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            margin-bottom: 2rem;
         }
-        .content-card-header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 1.25rem; padding-bottom: 1.25rem; 
-            border-bottom: 1px solid var(--border-color); 
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
         }
-        .content-card-header h5 { margin: 0; font-weight: 600; }
-        .content-card-header .btn-link { text-decoration: none; font-size: 0.9rem; }
+        .content-card {
+            background-color: var(--bg-white);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            border: none;
+        }
+        .content-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        .content-card-header h5 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.15rem;
+        }
+        /* Styling tombol aksi di tabel */
+        .btn-aksi {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
     </style>
 </head>
 <body>
 
-<!-- PERUBAHAN: Wrapper diubah menjadi d-flex... -->
-<div class="d-flex flex-row min-vh-100">
+<div class="wrapper">
     
     <?php 
-        // PERUBAHAN: Memanggil sidebar_baru.php
+        // Memanggil sidebar terpusat BARU
         require_once 'sidebar_baru.php'; 
     ?>
 
-    <!-- KONTEN UTAMA -->
     <div id="main-content">
         
         <header class="main-header d-flex justify-content-between align-items-center">
@@ -276,18 +166,16 @@ $result_properti = $koneksi->query($query_properti);
                 <button class="btn btn-outline-secondary d-lg-none me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
                     <i class="bi bi-list"></i>
                 </button>
-                
                 <div>
-                    <!-- PERUBAHAN: Judul disesuaikan -->
                     <h5 class="mb-0">Manajemen Properti</h5>
-                    <small class="text-muted">Kelola daftar properti Anda</small>
+                    <small class="text-muted">Kelola daftar gedung dan guesthouse Anda</small>
                 </div>
             </div>
             
             <div class="user-profile">
                 <div class="dropdown">
                     <a class="dropdown-toggle d-flex align-items-center text-decoration-none" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($nama_user); ?>&background=0D6EFD&color=fff" alt="User" class="me-2">
+                        <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($nama_user); ?>&background=232a4a&color=fff&font-size=0.5" alt="User" class="me-2">
                         <div class="lh-sm">
                             <span class="d-none d-md-inline text-dark"><strong><?php echo $nama_user; ?></strong></span><br>
                             <small class="d-none d-md-inline text-muted"><?php echo ucwords(str_replace('_', ' ', $role_user)); ?></small>
@@ -302,7 +190,6 @@ $result_properti = $koneksi->query($query_properti);
             </div>
         </header>
 
-        <!-- Notifikasi (Alerts) -->
         <?php if (!empty($success_message)): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="bi bi-check-circle-fill me-2"></i> <?php echo $success_message; ?>
@@ -316,25 +203,25 @@ $result_properti = $koneksi->query($query_properti);
             </div>
         <?php endif; ?>
 
-        <!-- Konten Utama (Tabel Properti) -->
         <div class="row">
             <div class="col-12">
                 <div class="content-card">
                     <div class="content-card-header">
                         <h5><i class="bi bi-building me-2"></i> Daftar Properti</h5>
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahModal">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
                             <i class="bi bi-plus-circle me-1"></i> Tambah Properti
                         </button>
                     </div>
                     
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped">
+                        <!-- PERUBAHAN: Menghapus table-hover & table-striped, menambah ID 'tabelProperti' -->
+                        <table id="tabelProperti" class="table" style="width:100%">
                             <thead class="table-light">
                                 <tr>
-                                    <th scope="col">#</th>
+                                    <th scope="col" style="width: 5%;">#</th>
                                     <th scope="col">Nama Properti</th>
                                     <th scope="col">Alamat</th>
-                                    <th scope="col" class="text-center">Aksi</th>
+                                    <th scope="col" class="text-center" style="width: 15%;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -346,7 +233,7 @@ $result_properti = $koneksi->query($query_properti);
                                             <td><?php echo htmlspecialchars($row['nama_properti']); ?></td>
                                             <td><?php echo htmlspecialchars($row['alamat']); ?></td>
                                             <td class="text-center">
-                                                <button type="button" class="btn btn-warning btn-sm btn-edit" 
+                                                <button type="button" class="btn btn-warning btn-aksi btn-edit" 
                                                         title="Edit Properti"
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#editModal"
@@ -355,7 +242,7 @@ $result_properti = $koneksi->query($query_properti);
                                                         data-alamat="<?php echo htmlspecialchars($row['alamat']); ?>">
                                                     <i class="bi bi-pencil-fill"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-danger btn-sm btn-hapus" 
+                                                <button type="button" class="btn btn-danger btn-aksi btn-hapus" 
                                                         title="Hapus Properti"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#hapusModal"
@@ -376,25 +263,17 @@ $result_properti = $koneksi->query($query_properti);
             </div>
         </div>
 
-    </div> <!-- Penutup #main-content -->
-</div> <!-- Penutup .d-flex -->
-
-<!-- 
-  ==========================================================
-  == MODALS
-  == PERUBAHAN: Dipindahkan ke luar #main-content
-  ==========================================================
--->
+    </div> 
+</div>
 
 <!-- Modal Tambah -->
 <div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="tambahModalLabel">Tambah Properti Baru</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <!-- PERUBAHAN: Action form diubah -->
             <form method="POST" action="manajemen_properti.php">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="tambah">
@@ -418,13 +297,12 @@ $result_properti = $koneksi->query($query_properti);
 
 <!-- Modal Edit -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="editModalLabel">Edit Properti</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <!-- PERUBAHAN: Action form diubah -->
             <form method="POST" action="manajemen_properti.php">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="edit">
@@ -449,13 +327,12 @@ $result_properti = $koneksi->query($query_properti);
 
 <!-- Modal Hapus -->
 <div class="modal fade" id="hapusModal" tabindex="-1" aria-labelledby="hapusModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
                 <h1 class="modal-title fs-5" id="hapusModalLabel">Konfirmasi Hapus</h1>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <!-- PERUBAHAN: Action form diubah -->
             <form method="POST" action="manajemen_properti.php">
                 <div class="modal-body">
                     <input type="hidden" name="action" value="hapus">
@@ -463,9 +340,7 @@ $result_properti = $koneksi->query($query_properti);
                     <p>Apakah Anda yakin ingin menghapus properti ini?</p>
                     <h5 class="text-danger" id="hapus_nama_properti"></h5>
                     <div class="alert alert-warning mt-3">
-                        <strong>Peringatan!</strong> Menghapus properti ini juga akan
-                        menghapus semua data kamar yang terkait dengannya.
-                        Tindakan ini tidak dapat dibatalkan.
+                        <strong>Peringatan!</strong> Tindakan ini tidak dapat dibatalkan. Pastikan tidak ada kamar yang terkait sebelum menghapus.
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -479,7 +354,24 @@ $result_properti = $koneksi->query($query_properti);
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
+<!-- BARU: JS DataTables (jQuery diperlukan) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- Script Inisialisasi DataTables & Modal (Vanilla JS) -->
 <script>
+    // Inisialisasi DataTables (jQuery)
+    $(document).ready(function() {
+        $('#tabelProperti').DataTable({
+            "language": {
+                // Menggunakan CDN untuk bahasa Indonesia
+                "url": "https://cdn.datatables.net/plug-ins/2.0.8/i18n/id.json"
+            }
+        });
+    });
+
+    // Script Modal (Vanilla JS)
     document.addEventListener('DOMContentLoaded', function () {
         
         // Modal Edit
@@ -507,10 +399,8 @@ $result_properti = $koneksi->query($query_properti);
                 hapusModal.querySelector('#hapus_nama_properti').textContent = nama;
             });
         }
-        
-        // PERUBAHAN: Script active link sidebar dihapus
-        // karena sudah ditangani oleh PHP di sidebar_baru.php
     });
 </script>
 </body>
 </html>
+

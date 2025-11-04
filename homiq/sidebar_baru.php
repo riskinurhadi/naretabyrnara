@@ -230,7 +230,7 @@ $is_pengaturan_page = (strpos($current_page, 'manajemen_') === 0);
                                     1. Link submenu menggunakan class 'active-submenu'.
                                     2. href diatur ke halaman spesifik.
                                 -->
-                                <a class="nav-link bi-gear-wide-connected<?php echo ($current_page == 'manajemen_properti.php') ? 'active-submenu' : ''; ?>" href="manajemen_properti.php">
+                                <a class="nav-link<?php echo ($current_page == 'manajemen_properti.php') ? 'active-submenu' : ''; ?>" href="manajemen_properti.php">
                                     Properti
                                 </a>
                             </li>
