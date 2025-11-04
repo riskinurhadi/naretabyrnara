@@ -18,7 +18,7 @@ $is_pengaturan_page = (strpos($current_page, 'manajemen_') === 0 || $current_pag
             
             <?php if (in_array($role_user, ['admin', 'front_office'])): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link <?php echo (in_array($current_page, ['daftar_reservasi.php', 'form_input_booking.php', 'detail_reservasi.php'])) ? 'active' : ''; ?>" href="daftar_reservasi.php">
                         <i class="bi bi-calendar-check"></i>
                         <span>Reservasi</span>
                     </a>
