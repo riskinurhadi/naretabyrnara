@@ -282,25 +282,32 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
                 <small class="text-muted">Berikut adalah ringkasan aktivitas terbaru.</small>
             </div>
             
-            <div class="user-profile">
-                <div class="dropdown">
-                    <a class="dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($nama_user); ?>&background=random&color=fff" alt="User" class="me-2">
-                        <div>
-                            <span class="d-none d-md-inline"><strong><?php echo $nama_user; ?></strong></span>
-                            <br>
-                            <small class="d-none d-md-inline text-muted"><?php echo ucwords(str_replace('_', ' ', $role_user)); ?></small>
-                        </div>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="#">Profil Saya</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="logout.php">
-                            <i class="bi bi-box-arrow-right me-2"></i> Logout
-                        </a></li>
-                    </ul>
-                </div>
+<div class="user-profile">
+    <div class="dropdown">
+        <a class="dropdown-toggle d-flex align-items-center text-decoration-none" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            
+            <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($nama_user); ?>&background=0D6EFD&color=fff" alt="User" class="me-2">
+            
+            <div class="lh-sm"> 
+                <span class="d-none d-md-inline text-dark">
+                    <strong><?php echo $nama_user; ?></strong>
+                </span>
+                <br>
+                <small class="d-none d-md-inline text-muted">
+                    <?php echo ucwords(str_replace('_', ' ', $role_user)); ?>
+                </small>
             </div>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#">Profil Saya</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="logout.php">
+                <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a></li>
+        </ul>
+    </div>
+</div>
         </header>
 
         <div class="row">
