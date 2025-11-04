@@ -508,40 +508,26 @@ $koneksi->close();
                         </div>
                     </div>
 
-                    <!-- Modal Ambil/Upload Identitas -->
+                    <!-- Modal Upload Identitas (Mobile-first) -->
                     <div class="modal fade" id="modalIdentitas" tabindex="-1" aria-hidden="true">
-                      <div class="modal-dialog modal-lg modal-dialog-centered">
+                      <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title"><i class="bi bi-camera me-2"></i>Ambil/Upload Foto Identitas</h5>
+                            <h5 class="modal-title"><i class="bi bi-camera me-2"></i>Upload Foto Identitas</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                            <div class="row g-3">
-                                <div class="col-md-7">
-                                    <div class="ratio ratio-4x3 bg-dark rounded overflow-hidden">
-                                        <video id="video" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
-                                        <canvas id="canvas" style="display:none;"></canvas>
-                                    </div>
-                                    <div class="mt-2 d-flex gap-2">
-                                        <button class="btn btn-secondary" type="button" id="btnStartCam"><i class="bi bi-camera-video"></i> Nyalakan Kamera</button>
-                                        <button class="btn btn-outline-primary" type="button" id="btnCapture"><i class="bi bi-camera"></i> Ambil Foto</button>
-                                    </div>
+                            <form id="uploadForm" enctype="multipart/form-data">
+                                <input type="hidden" name="id_reservasi" value="<?php echo $id_reservasi; ?>">
+                                <div class="mb-3">
+                                    <label class="form-label">Ambil/Upload Foto Identitas (KTP/SIM)</label>
+                                    <input type="file" class="form-control" name="foto" accept="image/*" capture="environment" required>
+                                    <div class="form-text">Di ponsel, tombol ini akan membuka kamera langsung.</div>
                                 </div>
-                                <div class="col-md-5">
-                                    <form id="uploadForm" enctype="multipart/form-data">
-                                        <input type="hidden" name="id_reservasi" value="<?php echo $id_reservasi; ?>">
-                                        <div class="mb-3">
-                                            <label class="form-label">Upload File (opsional)</label>
-                                            <input type="file" class="form-control" name="foto" accept="image/*">
-                                        </div>
-                                        <div class="alert alert-info small">Anda dapat menggunakan kamera PC/laptop atau upload foto dari perangkat lain.</div>
-                                        <div class="d-grid gap-2">
-                                            <button type="button" class="btn btn-primary" id="btnUpload"><i class="bi bi-cloud-upload"></i> Simpan & Check-in</button>
-                                        </div>
-                                    </form>
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-primary" id="btnUpload"><i class="bi bi-cloud-upload"></i> Simpan & Check-in</button>
                                 </div>
-                            </div>
+                            </form>
                           </div>
                         </div>
                       </div>
@@ -567,44 +553,28 @@ $koneksi->close();
                 .catch(() => alert('Gagal memperbarui status'));
         }
 
-        // Kamera
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const btnStartCam = document.getElementById('btnStartCam');
-        const btnCapture = document.getElementById('btnCapture');
+        // Upload-only (mobile-first)
         const btnUpload = document.getElementById('btnUpload');
         const uploadForm = document.getElementById('uploadForm');
-
-        let stream;
-        if (btnStartCam) {
-            btnStartCam.onclick = async () => {
-                try { stream = await navigator.mediaDevices.getUserMedia({ video: true }); video.srcObject = stream; }
-                catch (e) { alert('Kamera tidak tersedia: ' + e.message); }
-            };
-        }
-        if (btnCapture) {
-            btnCapture.onclick = () => {
-                if (!video.srcObject) { alert('Kamera belum aktif'); return; }
-                canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            };
-        }
         if (btnUpload) {
             btnUpload.onclick = async () => {
                 const fd = new FormData(uploadForm);
-                // Jika ada hasil capture di canvas, kirim base64
-                if (canvas && canvas.width) {
-                    fd.append('image_base64', canvas.toDataURL('image/jpeg', 0.9));
-                }
                 const res = await fetch('upload_identitas.php', { method: 'POST', body: fd });
                 const js = await res.json();
                 if (!js.ok) { alert(js.message || 'Gagal upload identitas'); return; }
-                // Setelah upload sukses, update status ke Checked-in
                 doUpdateStatus('checkin');
             };
         }
     </script>
+    <style>
+        /* Mobile-friendly tweaks: buat tombol penuh dan spacing lega di layar kecil */
+        @media (max-width: 576px) {
+            .content-card { padding: 1rem; }
+            .price-box { padding: 1.25rem; }
+            .d-grid > .btn, .modal .btn { padding: 0.85rem 1rem; font-weight: 600; }
+            .modal-dialog { margin: 0.75rem; }
+        }
+    </style>
 </body>
 </html>
 
