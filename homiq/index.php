@@ -83,6 +83,8 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
                 margin-left: var(--sidebar-width);
                 width: calc(100% - var(--sidebar-width));
             }
+            /* Push body to give a stable left column and avoid overlay issues */
+            body { margin-left: var(--sidebar-width); }
         }
 
         /* Di bawah 992px (mobile), main-content akan full-width */
@@ -116,6 +118,9 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             margin-bottom: 1.5rem;
         }
+        /* Ensure layer ordering so sidebar doesn't visually overlap content on some setups */
+        .offcanvas-lg { z-index: 1020; }
+        #main-content { position: relative; z-index: 1; }
         .user-profile .dropdown-toggle::after { display: none; }
         .user-profile img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .stat-card {
