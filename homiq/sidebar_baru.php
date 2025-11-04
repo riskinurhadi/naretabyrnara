@@ -39,9 +39,12 @@ $is_pengaturan_page = (strpos($current_page, 'manajemen_') === 0);
         padding: 1.25rem 1.5rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         font-weight: 600;
-        /* PERUBAHAN: Mengganti var(--bg-white) yang tidak ada 
-           dengan var(--sidebar-active-pill) yang sudah ada (#ffffff) */
-        color: var(--sidebar-active-pill); 
+        /* PERUBAHAN: Properti 'color' dihapus dari sini... */
+    }
+    
+    /* PERUBAHAN: ...dan dipindahkan ke aturan baru yang lebih spesifik di bawah ini */
+    .sidebar-nav-wrapper .offcanvas-header .offcanvas-title {
+        color: var(--sidebar-active-pill, #ffffff); /* Fallback ke #ffffff */
     }
     
     .sidebar-nav {
@@ -215,5 +218,7 @@ $is_pengaturan_page = (strpos($current_page, 'manajemen_') === 0);
         </ul>
     </div>
 </div>
+
+
 
 
