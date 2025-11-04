@@ -29,7 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
         $harga = intval(str_replace('.', '', $_POST['harga'])); // Hapus format ribuan
         
         if ($id_properti > 0 && !empty($nama_kamar) && !empty($tipe_kamar) && $harga >= 0) {
-            $stmt = $koneksi->prepare("INSERT INTO tbl_kamar (id_properti, nama_kamar, tipe_kamar, harga, status) VALUES (?, ?, ?, ?, 'Tersedia')");
+            // FIX 1: Mengganti 'harga' dengan 'harga_default'
+            $stmt = $koneksi->prepare("INSERT INTO tbl_kamar (id_properti, nama_kamar, tipe_kamar, harga_default, status) VALUES (?, ?, ?, ?, 'Tersedia')");
             $stmt->bind_param("issi", $id_properti, $nama_kamar, $tipe_kamar, $harga);
             if ($stmt->execute()) { $success_message = "Kamar baru berhasil ditambahkan."; }
             else { $error_message = "Gagal menambahkan kamar: " . $stmt->error; }
@@ -47,7 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
         $status = $koneksi->real_escape_string($_POST['status']);
         
         if ($id_kamar > 0 && $id_properti > 0 && !empty($nama_kamar) && !empty($tipe_kamar) && $harga >= 0) {
-            $stmt = $koneksi->prepare("UPDATE tbl_kamar SET id_properti = ?, nama_kamar = ?, tipe_kamar = ?, harga = ?, status = ? WHERE id_kamar = ?");
+            // FIX 2: Mengganti 'harga' dengan 'harga_default'
+            $stmt = $koneksi->prepare("UPDATE tbl_kamar SET id_properti = ?, nama_kamar = ?, tipe_kamar = ?, harga_default = ?, status = ? WHERE id_kamar = ?");
             $stmt->bind_param("issisi", $id_properti, $nama_kamar, $tipe_kamar, $harga, $status, $id_kamar);
             if ($stmt->execute()) { $success_message = "Data kamar berhasil diperbarui."; }
             else { $error_message = "Gagal memperbarui kamar: " . $stmt->error; }
@@ -94,7 +96,8 @@ if ($result_properti_dropdown->num_rows > 0) {
 }
 
 // 2. Ambil daftar kamar (untuk tabel)
-$query_kamar = "SELECT k.*, p.nama_properti 
+// FIX 3: Menambahkan alias 'k.harga_default AS harga' agar sisa kode tidak error
+$query_kamar = "SELECT k.*, k.harga_default AS harga, p.nama_properti 
                 FROM tbl_kamar k
                 JOIN tbl_properti p ON k.id_properti = p.id_properti 
                 ORDER BY p.nama_properti ASC, k.nama_kamar ASC";
@@ -558,3 +561,4 @@ $status_kamar_list = ['Tersedia', 'Kotor', 'Maintenance', 'Tidak Tersedia'];
 </script>
 </body>
 </html>
+
