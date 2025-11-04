@@ -262,7 +262,7 @@ $koneksi->close();
         /* MAIN CONTENT */
         #main-content {
             margin-left: 0;
-            padding: 1.5rem;
+            padding: 1rem;
             transition: margin-left 0.3s ease;
             width: 100%;
             max-width: 100%;
