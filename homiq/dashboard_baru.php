@@ -51,7 +51,8 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             --sidebar-width: 280px;
             
             /* Warna (Palette Baru Sesuai Gambar) */
-            --sidebar-bg: #232a4a; /* Biru tua solid untuk sidebar */
+            /* PERUBAHAN: Menggunakan gradien untuk background sidebar */
+            --sidebar-bg: linear-gradient(180deg, #232a4a, #1a1f33);
             --sidebar-text: rgba(255, 255, 255, 0.7);
             --sidebar-text-active: #232a4a;
             --sidebar-active-pill: #ffffff;
@@ -80,9 +81,14 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
 
         /* * 1. STYLING SIDEBAR BARU (Desktop & Mobile)
          */
-        .sidebar-nav-wrapper {
+        
+        /* * PERUBAHAN: Selektor diperkuat dari .sidebar-nav-wrapper
+         * menjadi .sidebar-nav-wrapper.offcanvas
+         * Ini untuk mengalahkan selektor .offcanvas bawaan Bootstrap
+         */
+        .sidebar-nav-wrapper.offcanvas {
             width: var(--sidebar-width);
-            background-color: var(--sidebar-bg);
+            background: var(--sidebar-bg); /* <-- Menggunakan 'background' untuk gradien */
             border-right: none; /* Hapus border, ganti shadow */
             transition: transform 0.3s ease-in-out;
         }
@@ -172,7 +178,8 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
         /* * 3. LOGIKA RESPONSIVE (LAYOUT DESKTOP)
          */
         @media (min-width: 992px) {
-            .sidebar-nav-wrapper {
+            /* PERUBAHAN: Selektor juga diperkuat di sini */
+            .sidebar-nav-wrapper.offcanvas {
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -317,7 +324,7 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="stat-card">
                     <!-- PERUBAHAN HTML: .stat-icon -> .stat-icon-circle .green -->
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex align-itemsT-center">
                         <div class="stat-icon-circle green me-3"><i class="bi bi-door-open"></i></div>
                         <div>
                             <h3><?php echo $stat_kamar; ?></h3>
@@ -389,7 +396,7 @@ $result_reservasi_terbaru = $koneksi->query($query_reservasi);
                 <div class="content-card">
                     <div class="content-card-header">
                         <h5><i class="bi bi-clipboard2-check me-2"></i> Aktivitas Housekeeping</h5>
-                        <a href="#" class="btn btn-link">Lihat Laporan</a>
+                        <a href="#" class="btn btn-link">Liat Laporan</a>
                     </div>
                     <!-- Perbaikan kecil: 'classs' menjadi 'class' -->
                     <div class="text-center text-muted p-4"> 
