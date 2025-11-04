@@ -13,8 +13,8 @@ $current_year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
 if ($current_month < 1 || $current_month > 12) $current_month = date('n');
 if ($current_year < 2020 || $current_year > 2100) $current_year = date('Y');
 
-// Hitung jumlah hari dalam bulan
-$days_in_month = cal_days_in_month(CAL_GREGORIAN, $current_month, $current_year);
+// Hitung jumlah hari dalam bulan (tanpa extension calendar)
+$days_in_month = date('t', mktime(0, 0, 0, $current_month, 1, $current_year));
 $first_day = date('N', mktime(0, 0, 0, $current_month, 1, $current_year)); // 1=Monday, 7=Sunday
 
 // Format untuk query
