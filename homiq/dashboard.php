@@ -137,6 +137,14 @@ $koneksi->close();
             background: var(--bg-light);
             color: var(--text-dark);
             overflow-x: hidden;
+            width: 100%;
+            max-width: 100vw;
+        }
+
+        html {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100vw;
         }
 
         /* SIDEBAR */
@@ -256,11 +264,21 @@ $koneksi->close();
             margin-left: 0;
             padding: 2rem;
             transition: margin-left 0.3s ease;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         @media (min-width: 992px) {
             #main-content {
                 margin-left: var(--sidebar-width);
+                width: calc(100% - var(--sidebar-width));
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            #main-content {
+                padding: 1rem;
             }
         }
 
@@ -272,6 +290,8 @@ $koneksi->close();
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             margin-bottom: 2rem;
             border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 100%;
         }
 
         .main-header h5 {
@@ -279,6 +299,22 @@ $koneksi->close();
             font-weight: 700;
             color: var(--text-dark);
             margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 1rem 1.25rem;
+            }
+
+            .main-header h5 {
+                font-size: 1.25rem;
+            }
+
+            .main-header .d-flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 1rem;
+            }
         }
 
         /* STAT CARDS */
@@ -335,6 +371,34 @@ $koneksi->close();
             border: 1px solid var(--border-color);
             overflow: hidden;
             margin-top: 2rem;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .calendar-wrapper {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 70vh;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .calendar-wrapper::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+
+        .calendar-wrapper::-webkit-scrollbar-track {
+            background: var(--bg-light);
+            border-radius: 4px;
+        }
+
+        .calendar-wrapper::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .calendar-wrapper::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
         }
 
         .calendar-header {
@@ -344,6 +408,31 @@ $koneksi->close();
             justify-content: space-between;
             align-items: center;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-header {
+                padding: 1rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .calendar-header h4 {
+                font-size: 1rem;
+            }
+
+            .calendar-nav {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .calendar-nav .btn {
+                flex: 1;
+                font-size: 0.85rem;
+                padding: 0.4rem 0.75rem;
+            }
         }
 
         .calendar-header h4 {
@@ -374,7 +463,8 @@ $koneksi->close();
         }
 
         .calendar-table {
-            width: 100%;
+            width: max-content;
+            min-width: 100%;
             border-collapse: collapse;
         }
 
@@ -389,13 +479,21 @@ $koneksi->close();
             position: sticky;
             top: 0;
             z-index: 10;
+            white-space: nowrap;
+        }
+
+        .calendar-table th.room-name-cell {
+            min-width: 200px;
+            max-width: 200px;
         }
 
         .calendar-table td {
             padding: 0.5rem;
             border: 1px solid var(--border-color);
             vertical-align: top;
-            min-width: 120px;
+            min-width: 100px;
+            max-width: 120px;
+            width: 120px;
         }
 
         .room-name-cell {
@@ -405,8 +503,12 @@ $koneksi->close();
             padding: 0.75rem !important;
             position: sticky;
             left: 0;
-            z-index: 5;
+            z-index: 15;
             border-right: 2px solid var(--border-color);
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+            min-width: 200px;
+            max-width: 200px;
+            width: 200px;
         }
 
         .room-name-cell small {
@@ -419,6 +521,35 @@ $koneksi->close();
         .calendar-day {
             min-height: 80px;
             position: relative;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-table td {
+                min-width: 80px;
+                max-width: 80px;
+                width: 80px;
+            }
+
+            .calendar-day {
+                min-height: 60px;
+            }
+
+            .booking-block {
+                font-size: 0.65rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .calendar-day-number {
+                font-size: 0.75rem;
+            }
+
+            .room-name-cell {
+                min-width: 150px;
+                max-width: 150px;
+                width: 150px;
+                font-size: 0.8rem;
+            }
         }
 
         .calendar-day-number {
@@ -546,6 +677,56 @@ $koneksi->close();
 
         .badge-status.booking { background: #dbeafe; color: var(--primary-color); }
         .badge-status.checked-in { background: #d1fae5; color: var(--success-color); }
+
+        /* RESPONSIVE STAT CARDS */
+        @media (max-width: 768px) {
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-card h3 {
+                font-size: 1.5rem;
+            }
+
+            .stat-icon-circle {
+                width: 48px;
+                height: 48px;
+                font-size: 1.25rem;
+            }
+
+            .widget-card {
+                padding: 1rem;
+            }
+        }
+
+        /* FIX CONTAINER OVERFLOW */
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .row > * {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .row > * {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+        }
+
+        /* ENSURE NO HORIZONTAL OVERFLOW */
+        .d-flex {
+            max-width: 100%;
+        }
+
+        .container-fluid,
+        .container {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
     </style>
 </head>
 <body>
@@ -719,7 +900,7 @@ $koneksi->close();
                             </div>
                         </div>
 
-                        <div class="table-responsive" style="max-height: 70vh; overflow-y: auto;">
+                        <div class="calendar-wrapper">
                             <table class="calendar-table">
                                 <thead>
                                     <tr>
